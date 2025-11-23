@@ -662,12 +662,6 @@ ai-workflow-demo/
 
 ---
 
-## Questions or Feedback
-
-For questions about this specification or suggestions for improvements, contact the Agile Center of Excellence team.
-
----
-
 **Version:** 1.0  
-**Last Updated:** November 2024  
+**Last Updated:** 23 November 2025  
 **Status:** Ready for Implementation
