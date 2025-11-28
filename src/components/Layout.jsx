@@ -1,7 +1,58 @@
 import { useState } from 'react';
+import RoleWindow from './RoleWindow';
 import './Layout.css';
 
 function Layout() {
+  const [activeRole, setActiveRole] = useState('csm'); // 'csm', 'pm', 'eng'
+  const [csmMessages, setCsmMessages] = useState([]);
+  const [pmMessages, setPmMessages] = useState([]);
+  const [engMessages, setEngMessages] = useState([]);
+
+  const handleCsmMessage = (message) => {
+    const newMessage = {
+      role: 'user',
+      content: message,
+      timestamp: new Date().toISOString()
+    };
+    setCsmMessages([...csmMessages, newMessage]);
+
+    // Simulate agent response
+    setTimeout(() => {
+      const agentMessage = {
+        role: 'agent',
+        content: 'This is a demo response from the Request Intake Agent. In the full implementation, this will connect to the Claude API.',
+        timestamp: new Date().toISOString()
+      };
+      setCsmMessages(prev => [...prev, agentMessage]);
+    }, 1000);
+  };
+
+  const handlePmMessage = (message) => {
+    const newMessage = {
+      role: 'user',
+      content: message,
+      timestamp: new Date().toISOString()
+    };
+    setPmMessages([...pmMessages, newMessage]);
+  };
+
+  const handleEngMessage = (message) => {
+    const newMessage = {
+      role: 'user',
+      content: message,
+      timestamp: new Date().toISOString()
+    };
+    setEngMessages([...engMessages, newMessage]);
+  };
+
+  const handleCsmHandoff = () => {
+    setActiveRole('pm');
+  };
+
+  const handlePmHandoff = () => {
+    setActiveRole('eng');
+  };
+
   return (
     <div className="layout">
       <header className="layout-header">
@@ -12,35 +63,31 @@ function Layout() {
       <main className="layout-main">
         {/* Top Section - Three Role Windows */}
         <section className="role-windows">
-          <div className="role-window">
-            <div className="role-header">
-              <h2>Customer Success Manager</h2>
-              <span className="role-status active">Active ✓</span>
-            </div>
-            <div className="role-content">
-              <p className="placeholder">CSM conversation window placeholder</p>
-            </div>
-          </div>
+          <RoleWindow
+            title="Customer Success Manager"
+            isActive={activeRole === 'csm'}
+            messages={csmMessages}
+            onSendMessage={handleCsmMessage}
+            onHandoff={handleCsmHandoff}
+            showHandoffButton={activeRole === 'csm'}
+          />
 
-          <div className="role-window">
-            <div className="role-header">
-              <h2>Product Manager</h2>
-              <span className="role-status waiting">Waiting...</span>
-            </div>
-            <div className="role-content">
-              <p className="placeholder">PM conversation window placeholder</p>
-            </div>
-          </div>
+          <RoleWindow
+            title="Product Manager"
+            isActive={activeRole === 'pm'}
+            messages={pmMessages}
+            onSendMessage={handlePmMessage}
+            onHandoff={handlePmHandoff}
+            showHandoffButton={activeRole === 'pm'}
+          />
 
-          <div className="role-window">
-            <div className="role-header">
-              <h2>Engineering Lead</h2>
-              <span className="role-status waiting">Waiting...</span>
-            </div>
-            <div className="role-content">
-              <p className="placeholder">Engineering conversation window placeholder</p>
-            </div>
-          </div>
+          <RoleWindow
+            title="Engineering Lead"
+            isActive={activeRole === 'eng'}
+            messages={engMessages}
+            onSendMessage={handleEngMessage}
+            showHandoffButton={false}
+          />
         </section>
 
         {/* Middle Section - Agent Activity Feed */}

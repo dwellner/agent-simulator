@@ -1,0 +1,245 @@
+.role-window {
+  background-color: #2a2a2a;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.3s ease;
+}
+
+.role-window.active {
+  border-color: #10b981;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, 0.3);
+}
+
+.role-window.inactive {
+  opacity: 0.85;
+}
+
+/* Header */
+.role-header {
+  background-color: #333;
+  padding: 1rem;
+  border-bottom: 2px solid #3a3a3a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.role-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.role-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.role-status.active {
+  background-color: #10b981;
+  color: white;
+}
+
+.role-status.waiting {
+  background-color: #6b7280;
+  color: #d1d5db;
+}
+
+/* Content Area */
+.role-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  min-height: 300px;
+  max-height: 400px;
+}
+
+.placeholder {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+  margin: 0;
+}
+
+/* Messages */
+.messages-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.message {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 8px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.user-message {
+  background-color: #3b4252;
+  align-self: flex-end;
+  max-width: 80%;
+  border-bottom-right-radius: 2px;
+}
+
+.agent-message {
+  background-color: #2e3440;
+  align-self: flex-start;
+  max-width: 85%;
+  border-bottom-left-radius: 2px;
+  border-left: 3px solid #667eea;
+}
+
+.message-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.message-sender {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #a78bfa;
+}
+
+.user-message .message-sender {
+  color: #60a5fa;
+}
+
+.message-timestamp {
+  font-size: 0.75rem;
+  color: #9ca3af;
+}
+
+.message-content {
+  color: #e5e7eb;
+  line-height: 1.5;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Input Area */
+.role-input {
+  padding: 1rem;
+  border-top: 2px solid #3a3a3a;
+  background-color: #2a2a2a;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.role-input form {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.message-input {
+  flex: 1;
+  padding: 0.75rem;
+  background-color: #1a1a1a;
+  border: 2px solid #3a3a3a;
+  border-radius: 6px;
+  color: #e0e0e0;
+  font-size: 0.95rem;
+  transition: border-color 0.2s ease;
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: #667eea;
+}
+
+.message-input:disabled {
+  background-color: #2a2a2a;
+  color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.message-input::placeholder {
+  color: #6b7280;
+}
+
+.send-button {
+  padding: 0.75rem 1.5rem;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.send-button:hover:not(:disabled) {
+  background-color: #5568d3;
+}
+
+.send-button:disabled {
+  background-color: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.handoff-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.handoff-button:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.handoff-button:disabled {
+  background-color: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Scrollbar Styling */
+.role-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.role-content::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.role-content::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+.role-content::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

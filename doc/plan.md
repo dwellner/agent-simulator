@@ -45,14 +45,14 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Layout renders correctly with placeholder content ✓
 
-### Step 2.2: Role Window Component
-- [ ] Create `src/components/RoleWindow.jsx`
-- [ ] Implement props: title, isActive, messages, onSendMessage
-- [ ] Add visual indicator for active/inactive state
-- [ ] Style readonly vs active input field
-- [ ] Add basic message display (chat bubbles)
+### Step 2.2: Role Window Component ✓
+- [x] Create `src/components/RoleWindow.jsx`
+- [x] Implement props: title, isActive, messages, onSendMessage
+- [x] Add visual indicator for active/inactive state
+- [x] Style readonly vs active input field
+- [x] Add basic message display (chat bubbles)
 
-**Validation:** Render 3 RoleWindow components with different active states
+**Validation:** Render 3 RoleWindow components with different active states ✓
 
 ### Step 2.3: Workflow Timeline Component
 - [ ] Create `src/components/WorkflowTimeline.jsx`
