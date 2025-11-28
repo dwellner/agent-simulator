@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import RoleWindow from './RoleWindow';
 import WorkflowTimeline from './WorkflowTimeline';
+import AgentActivityFeed from './AgentActivityFeed';
 import './Layout.css';
 
 function Layout() {
@@ -8,6 +9,7 @@ function Layout() {
   const [csmMessages, setCsmMessages] = useState([]);
   const [pmMessages, setPmMessages] = useState([]);
   const [engMessages, setEngMessages] = useState([]);
+  const [activities, setActivities] = useState([]);
 
   const handleCsmMessage = (message) => {
     const newMessage = {
@@ -17,6 +19,14 @@ function Layout() {
     };
     setCsmMessages([...csmMessages, newMessage]);
 
+    // Add agent activity
+    setActivities(prev => [...prev, {
+      type: 'working',
+      agent: 'Request Intake Agent',
+      message: 'Processing customer request and searching for similar cases...',
+      timestamp: new Date().toISOString()
+    }]);
+
     // Simulate agent response
     setTimeout(() => {
       const agentMessage = {
@@ -25,6 +35,13 @@ function Layout() {
         timestamp: new Date().toISOString()
       };
       setCsmMessages(prev => [...prev, agentMessage]);
+
+      setActivities(prev => [...prev, {
+        type: 'complete',
+        agent: 'Request Intake Agent',
+        message: 'Response generated successfully',
+        timestamp: new Date().toISOString()
+      }]);
     }, 1000);
   };
 
@@ -36,6 +53,14 @@ function Layout() {
     };
     setPmMessages([...pmMessages, newMessage]);
 
+    // Add agent activity
+    setActivities(prev => [...prev, {
+      type: 'analysis',
+      agent: 'Product Queue Agent',
+      message: 'Analyzing queue and synthesizing across requests...',
+      timestamp: new Date().toISOString()
+    }]);
+
     // Simulate agent response
     setTimeout(() => {
       const agentMessage = {
@@ -44,6 +69,13 @@ function Layout() {
         timestamp: new Date().toISOString()
       };
       setPmMessages(prev => [...prev, agentMessage]);
+
+      setActivities(prev => [...prev, {
+        type: 'complete',
+        agent: 'Product Queue Agent',
+        message: 'Queue analysis complete',
+        timestamp: new Date().toISOString()
+      }]);
     }, 1000);
   };
 
@@ -55,6 +87,14 @@ function Layout() {
     };
     setEngMessages([...engMessages, newMessage]);
 
+    // Add agent activity
+    setActivities(prev => [...prev, {
+      type: 'search',
+      agent: 'Technical Specification Agent',
+      message: 'Reviewing codebase architecture and past implementations...',
+      timestamp: new Date().toISOString()
+    }]);
+
     // Simulate agent response
     setTimeout(() => {
       const agentMessage = {
@@ -63,6 +103,13 @@ function Layout() {
         timestamp: new Date().toISOString()
       };
       setEngMessages(prev => [...prev, agentMessage]);
+
+      setActivities(prev => [...prev, {
+        type: 'complete',
+        agent: 'Technical Specification Agent',
+        message: 'Technical analysis complete',
+        timestamp: new Date().toISOString()
+      }]);
     }, 1000);
   };
 
@@ -99,14 +146,7 @@ function Layout() {
         </section>
 
         {/* Middle Section - Agent Activity Feed */}
-        <section className="activity-feed">
-          <h3>🤖 Agent Background Activity (Live)</h3>
-          <div className="activity-content">
-            <p className="activity-item">⚡ Request Intake Agent: Searching for similar requests...</p>
-            <p className="activity-item">✓ Found 47 similar cases across 3 customer segments</p>
-            <p className="activity-item">⚡ Product Queue Agent: Analyzing urgency factors...</p>
-          </div>
-        </section>
+        <AgentActivityFeed activities={activities} />
 
         {/* Bottom Section - Workflow Timeline */}
         <WorkflowTimeline

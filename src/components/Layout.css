@@ -48,39 +48,6 @@
   min-height: 400px;
 }
 
-/* Activity Feed Section */
-.activity-feed {
-  background-color: #2a2a2a;
-  border: 2px solid #3a3a3a;
-  border-radius: 8px;
-  padding: 1rem;
-  min-height: 150px;
-}
-
-.activity-feed h3 {
-  margin: 0 0 1rem 0;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #a78bfa;
-}
-
-.activity-content {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  max-height: 150px;
-  overflow-y: auto;
-}
-
-.activity-item {
-  margin: 0;
-  padding: 0.5rem;
-  background-color: #1a1a1a;
-  border-radius: 4px;
-  font-size: 0.9rem;
-  color: #d1d5db;
-}
-
 /* Footer */
 .layout-footer {
   background-color: #2a2a2a;

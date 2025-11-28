@@ -65,14 +65,14 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Timeline shows activity status for all roles simultaneously ✓
 
-### Step 2.4: Agent Activity Feed Component
-- [ ] Create `src/components/AgentActivityFeed.jsx`
-- [ ] Implement scrollable activity log
-- [ ] Style different activity types (in-progress ⚡, completed ✓)
-- [ ] Add auto-scroll to latest activity
-- [ ] Add clear visual hierarchy
+### Step 2.4: Agent Activity Feed Component ✓
+- [x] Create `src/components/AgentActivityFeed.jsx`
+- [x] Implement scrollable activity log
+- [x] Style different activity types (in-progress ⚡, completed ✓)
+- [x] Add auto-scroll to latest activity
+- [x] Add clear visual hierarchy
 
-**Validation:** Feed displays mock activity entries with proper styling
+**Validation:** Feed displays mock activity entries with proper styling ✓
 
 ---
 
