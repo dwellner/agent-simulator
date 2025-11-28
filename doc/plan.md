@@ -56,14 +56,14 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Render 3 RoleWindow components with different active states ✓
 
-### Step 2.3: Workflow Timeline Component
-- [ ] Create `src/components/WorkflowTimeline.jsx`
-- [ ] Show conversation activity status for each role (has messages, agent working, etc.)
-- [ ] Add elapsed time display (total demo time)
-- [ ] Make timeline responsive
-- [ ] Update to show parallel work vs sequential stages
+### Step 2.3: Workflow Timeline Component ✓
+- [x] Create `src/components/WorkflowTimeline.jsx`
+- [x] Show conversation activity status for each role (has messages, agent working, etc.)
+- [x] Add elapsed time display (total demo time)
+- [x] Make timeline responsive
+- [x] Update to show parallel work vs sequential stages
 
-**Validation:** Timeline shows activity status for all roles simultaneously
+**Validation:** Timeline shows activity status for all roles simultaneously ✓
 
 ### Step 2.4: Agent Activity Feed Component
 - [ ] Create `src/components/AgentActivityFeed.jsx`

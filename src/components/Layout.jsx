@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import RoleWindow from './RoleWindow';
+import WorkflowTimeline from './WorkflowTimeline';
 import './Layout.css';
 
 function Layout() {
+  const [startTime] = useState(Date.now());
   const [csmMessages, setCsmMessages] = useState([]);
   const [pmMessages, setPmMessages] = useState([]);
   const [engMessages, setEngMessages] = useState([]);
@@ -107,26 +109,12 @@ function Layout() {
         </section>
 
         {/* Bottom Section - Workflow Timeline */}
-        <section className="workflow-timeline">
-          <h3>📊 Workflow Timeline</h3>
-          <div className="timeline-content">
-            <div className="timeline-stages">
-              <div className="timeline-stage active">
-                <span className="stage-indicator">●</span>
-                <span className="stage-label">CSM Intake</span>
-              </div>
-              <div className="timeline-stage pending">
-                <span className="stage-indicator">○</span>
-                <span className="stage-label">PM Review</span>
-              </div>
-              <div className="timeline-stage pending">
-                <span className="stage-indicator">○</span>
-                <span className="stage-label">Eng Review</span>
-              </div>
-            </div>
-            <p className="elapsed-time">✓ 0m 0s elapsed</p>
-          </div>
-        </section>
+        <WorkflowTimeline
+          csmMessageCount={csmMessages.length}
+          pmMessageCount={pmMessages.length}
+          engMessageCount={engMessages.length}
+          startTime={startTime}
+        />
       </main>
 
       <footer className="layout-footer">
