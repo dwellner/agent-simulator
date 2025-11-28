@@ -25,13 +25,13 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Server starts and validates environment variables ✓
 
-### Step 1.3: Create Mock Data
-- [ ] Create `src/data/mockCustomers.js` (5-10 mock customers with ARR, tier, renewal dates)
-- [ ] Create `src/data/mockRequests.js` (5-10 historical feature requests)
-- [ ] Create `src/data/mockCodebase.js` (technical components for reference)
-- [ ] Export all mock data with proper structure
+### Step 1.3: Create Mock Data ✓
+- [x] Create `src/data/mockCustomers.js` (5-10 mock customers with ARR, tier, renewal dates)
+- [x] Create `src/data/mockRequests.js` (5-10 historical feature requests)
+- [x] Create `src/data/mockCodebase.js` (technical components for reference)
+- [x] Export all mock data with proper structure
 
-**Validation:** Import mock data in test file and verify structure
+**Validation:** Import mock data in test file and verify structure ✓
 
 ---
 
