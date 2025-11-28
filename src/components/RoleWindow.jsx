@@ -5,9 +5,7 @@ function RoleWindow({
   title,
   isActive,
   messages = [],
-  onSendMessage,
-  onHandoff,
-  showHandoffButton = false
+  onSendMessage
 }) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
@@ -28,12 +26,6 @@ function RoleWindow({
     }
   };
 
-  const handleHandoff = () => {
-    if (onHandoff) {
-      onHandoff();
-    }
-  };
-
   return (
     <div className={`role-window ${isActive ? 'active' : 'inactive'}`}>
       <div className="role-header">
@@ -46,9 +38,7 @@ function RoleWindow({
       <div className="role-content">
         {messages.length === 0 ? (
           <p className="placeholder">
-            {isActive
-              ? `Start the conversation...`
-              : 'Waiting for handoff...'}
+            Start the conversation...
           </p>
         ) : (
           <div className="messages-list">
@@ -95,15 +85,6 @@ function RoleWindow({
             Send
           </button>
         </form>
-        {showHandoffButton && (
-          <button
-            onClick={handleHandoff}
-            className="handoff-button"
-            disabled={!isActive}
-          >
-            Hand off to next stage →
-          </button>
-        )}
       </div>
     </div>
   );

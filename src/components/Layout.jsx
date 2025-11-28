@@ -3,7 +3,6 @@ import RoleWindow from './RoleWindow';
 import './Layout.css';
 
 function Layout() {
-  const [activeRole, setActiveRole] = useState('csm'); // 'csm', 'pm', 'eng'
   const [csmMessages, setCsmMessages] = useState([]);
   const [pmMessages, setPmMessages] = useState([]);
   const [engMessages, setEngMessages] = useState([]);
@@ -34,6 +33,16 @@ function Layout() {
       timestamp: new Date().toISOString()
     };
     setPmMessages([...pmMessages, newMessage]);
+
+    // Simulate agent response
+    setTimeout(() => {
+      const agentMessage = {
+        role: 'agent',
+        content: 'This is a demo response from the Product Queue Agent. In the full implementation, this will connect to the Claude API.',
+        timestamp: new Date().toISOString()
+      };
+      setPmMessages(prev => [...prev, agentMessage]);
+    }, 1000);
   };
 
   const handleEngMessage = (message) => {
@@ -43,14 +52,16 @@ function Layout() {
       timestamp: new Date().toISOString()
     };
     setEngMessages([...engMessages, newMessage]);
-  };
 
-  const handleCsmHandoff = () => {
-    setActiveRole('pm');
-  };
-
-  const handlePmHandoff = () => {
-    setActiveRole('eng');
+    // Simulate agent response
+    setTimeout(() => {
+      const agentMessage = {
+        role: 'agent',
+        content: 'This is a demo response from the Technical Specification Agent. In the full implementation, this will connect to the Claude API.',
+        timestamp: new Date().toISOString()
+      };
+      setEngMessages(prev => [...prev, agentMessage]);
+    }, 1000);
   };
 
   return (
@@ -65,28 +76,23 @@ function Layout() {
         <section className="role-windows">
           <RoleWindow
             title="Customer Success Manager"
-            isActive={activeRole === 'csm'}
+            isActive={true}
             messages={csmMessages}
             onSendMessage={handleCsmMessage}
-            onHandoff={handleCsmHandoff}
-            showHandoffButton={activeRole === 'csm'}
           />
 
           <RoleWindow
             title="Product Manager"
-            isActive={activeRole === 'pm'}
+            isActive={true}
             messages={pmMessages}
             onSendMessage={handlePmMessage}
-            onHandoff={handlePmHandoff}
-            showHandoffButton={activeRole === 'pm'}
           />
 
           <RoleWindow
             title="Engineering Lead"
-            isActive={activeRole === 'eng'}
+            isActive={true}
             messages={engMessages}
             onSendMessage={handleEngMessage}
-            showHandoffButton={false}
           />
         </section>
 

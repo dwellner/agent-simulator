@@ -37,6 +37,8 @@ This plan breaks down the development into small, incremental steps that can be 
 
 ## Phase 2: Basic UI Layout
 
+**Design Decision:** The application uses a **parallel/flexible workflow model** where all three roles (CSM, PM, Engineering Lead) can be active and used simultaneously. This better demonstrates how AI agents work in parallel and supports a pull-based workflow where users can interact with any conversation at any time, in any order.
+
 ### Step 2.1: Main Layout Component ✓
 - [x] Create `src/components/Layout.jsx` with basic grid structure
 - [x] Implement responsive layout (horizontal split for 3 role windows)
@@ -56,12 +58,12 @@ This plan breaks down the development into small, incremental steps that can be 
 
 ### Step 2.3: Workflow Timeline Component
 - [ ] Create `src/components/WorkflowTimeline.jsx`
-- [ ] Implement 3-stage progress indicator (CSM → PM → Engineering)
-- [ ] Add visual styling for active, completed, and pending stages
-- [ ] Add elapsed time display
+- [ ] Show conversation activity status for each role (has messages, agent working, etc.)
+- [ ] Add elapsed time display (total demo time)
 - [ ] Make timeline responsive
+- [ ] Update to show parallel work vs sequential stages
 
-**Validation:** Timeline renders with different stage states
+**Validation:** Timeline shows activity status for all roles simultaneously
 
 ### Step 2.4: Agent Activity Feed Component
 - [ ] Create `src/components/AgentActivityFeed.jsx`
