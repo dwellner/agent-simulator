@@ -37,13 +37,13 @@ This plan breaks down the development into small, incremental steps that can be 
 
 ## Phase 2: Basic UI Layout
 
-### Step 2.1: Main Layout Component
-- [ ] Create `src/components/Layout.jsx` with basic grid structure
-- [ ] Implement responsive layout (horizontal split for 3 role windows)
-- [ ] Add header with app title
-- [ ] Add footer with reset button (non-functional initially)
+### Step 2.1: Main Layout Component ✓
+- [x] Create `src/components/Layout.jsx` with basic grid structure
+- [x] Implement responsive layout (horizontal split for 3 role windows)
+- [x] Add header with app title
+- [x] Add footer with reset button (non-functional initially)
 
-**Validation:** Layout renders correctly with placeholder content
+**Validation:** Layout renders correctly with placeholder content ✓
 
 ### Step 2.2: Role Window Component
 - [ ] Create `src/components/RoleWindow.jsx`

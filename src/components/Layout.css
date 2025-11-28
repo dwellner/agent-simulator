@@ -1,0 +1,271 @@
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: #1a1a1a;
+  color: #e0e0e0;
+}
+
+/* Header */
+.layout-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 2rem;
+  text-align: center;
+  border-bottom: 3px solid #764ba2;
+}
+
+.layout-header h1 {
+  margin: 0;
+  font-size: 2rem;
+  color: white;
+  font-weight: 700;
+}
+
+.subtitle {
+  margin: 0.5rem 0 0 0;
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 300;
+}
+
+/* Main Content */
+.layout-main {
+  flex: 1;
+  padding: 1.5rem;
+  max-width: 1920px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Role Windows Section */
+.role-windows {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  min-height: 400px;
+}
+
+.role-window {
+  background-color: #2a2a2a;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.role-header {
+  background-color: #333;
+  padding: 1rem;
+  border-bottom: 2px solid #3a3a3a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.role-header h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #e0e0e0;
+}
+
+.role-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.role-status.active {
+  background-color: #10b981;
+  color: white;
+}
+
+.role-status.waiting {
+  background-color: #6b7280;
+  color: #d1d5db;
+}
+
+.role-content {
+  flex: 1;
+  padding: 1rem;
+  overflow-y: auto;
+}
+
+.placeholder {
+  color: #6b7280;
+  font-style: italic;
+  text-align: center;
+  padding: 2rem;
+}
+
+/* Activity Feed Section */
+.activity-feed {
+  background-color: #2a2a2a;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 1rem;
+  min-height: 150px;
+}
+
+.activity-feed h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #a78bfa;
+}
+
+.activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.activity-item {
+  margin: 0;
+  padding: 0.5rem;
+  background-color: #1a1a1a;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #d1d5db;
+}
+
+/* Workflow Timeline Section */
+.workflow-timeline {
+  background-color: #2a2a2a;
+  border: 2px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.workflow-timeline h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #60a5fa;
+}
+
+.timeline-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-stages {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.timeline-stage {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.stage-indicator {
+  font-size: 1.5rem;
+}
+
+.timeline-stage.active .stage-indicator {
+  color: #10b981;
+}
+
+.timeline-stage.pending .stage-indicator {
+  color: #6b7280;
+}
+
+.stage-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.timeline-stage.active .stage-label {
+  color: #10b981;
+}
+
+.timeline-stage.pending .stage-label {
+  color: #9ca3af;
+}
+
+.elapsed-time {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #9ca3af;
+  font-weight: 500;
+}
+
+/* Footer */
+.layout-footer {
+  background-color: #2a2a2a;
+  border-top: 2px solid #3a3a3a;
+  padding: 1rem;
+  text-align: center;
+}
+
+.reset-button {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: white;
+  background-color: #ef4444;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.reset-button:hover:not(:disabled) {
+  background-color: #dc2626;
+}
+
+.reset-button:disabled {
+  background-color: #6b7280;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Responsive Design */
+@media (max-width: 1280px) {
+  .role-windows {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .timeline-stages {
+    gap: 1rem;
+  }
+
+  .layout-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Scrollbar Styling */
+.role-content::-webkit-scrollbar,
+.activity-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.role-content::-webkit-scrollbar-track,
+.activity-content::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+.role-content::-webkit-scrollbar-thumb,
+.activity-content::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+.role-content::-webkit-scrollbar-thumb:hover,
+.activity-content::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
+}

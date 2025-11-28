@@ -1,17 +1,8 @@
-import { useState } from 'react'
+import Layout from './components/Layout'
 import './App.css'
 
 function App() {
-  return (
-    <div className="App">
-      <header>
-        <h1>AI-Enhanced Product Workflow Demo</h1>
-      </header>
-      <main>
-        <p>Application initialized successfully!</p>
-      </main>
-    </div>
-  )
+  return <Layout />
 }
 
 export default App
