@@ -188,8 +188,3 @@ export const getTotalRevenueAtRisk = () => {
     .filter(request => request.status === 'pending')
     .reduce((total, request) => total + request.revenueAtRisk, 0);
 };
-
-// Helper function to get requests by category
-export const getRequestsByCategory = (category) => {
-  return mockRequests.filter(request => request.category === category);
-};
