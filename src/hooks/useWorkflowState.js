@@ -14,7 +14,7 @@ function useWorkflowState() {
   const [csmLoading, setCsmLoading] = useState(false);
   const [pmLoading, setPmLoading] = useState(false);
   const [engLoading, setEngLoading] = useState(false);
-  const [featureQueue, setFeatureQueue] = useState([]);
+  const [customerInsights, setCustomerInsights] = useState([]);
 
   /**
    * Handle CSM (Customer Success Manager) messages
@@ -186,36 +186,36 @@ function useWorkflowState() {
   };
 
   /**
-   * Add current structured request to PM queue
+   * Submit current structured request as customer insight to PM
    */
-  const addToQueue = () => {
+  const submitInsight = () => {
     if (!structuredRequest) {
-      console.warn('No structured request to add to queue');
+      console.warn('No structured request to submit as insight');
       return;
     }
 
     // Add unique ID and submission timestamp
-    const queueItem = {
+    const insight = {
       ...structuredRequest,
-      queueId: `queue-${Date.now()}`,
+      insightId: `insight-${Date.now()}`,
       submittedAt: new Date().toISOString(),
       submittedBy: 'CSM'
     };
 
-    setFeatureQueue(prev => [...prev, queueItem]);
+    setCustomerInsights(prev => [...prev, insight]);
 
     // Add activity
     setActivities(prev => [...prev, {
-      type: 'queue',
+      type: 'insight',
       agent: 'Request Intake Agent',
-      message: `Added "${structuredRequest.request.title || 'feature request'}" to PM queue (${structuredRequest.customer.companyName})`,
+      message: `Submitted insight: "${structuredRequest.request.title || 'customer request'}" from ${structuredRequest.customer.companyName}`,
       timestamp: new Date().toISOString()
     }]);
 
     // Reset structured request for next intake
     setStructuredRequest(null);
 
-    return queueItem;
+    return insight;
   };
 
   /**
@@ -227,7 +227,7 @@ function useWorkflowState() {
     setEngMessages([]);
     setActivities([]);
     setStructuredRequest(null);
-    setFeatureQueue([]);
+    setCustomerInsights([]);
     setCsmLoading(false);
     setPmLoading(false);
     setEngLoading(false);
@@ -242,7 +242,7 @@ function useWorkflowState() {
     engMessages,
     activities,
     structuredRequest,
-    featureQueue,
+    customerInsights,
     csmLoading,
     pmLoading,
     engLoading,
@@ -253,7 +253,7 @@ function useWorkflowState() {
     handleEngMessage,
 
     // Actions
-    addToQueue,
+    submitInsight,
     resetWorkflow
   };
 }

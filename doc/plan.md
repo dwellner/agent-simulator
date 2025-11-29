@@ -41,16 +41,19 @@ This plan breaks down the development into small, incremental steps that can be 
 The application uses a **parallel/flexible workflow model** where all three roles (CSM, PM, Engineering Lead) can be active and used simultaneously. This better demonstrates how AI agents work in parallel and supports a pull-based workflow where users can interact with any conversation at any time, in any order.
 
 ### Agent Context Management
-Each agent (Request Intake, Product Queue, Technical Specification) maintains **separate Claude conversation contexts**. Information flows between agents via structured data passing:
-- CSM → Structured Request → PM Queue
+Each agent (Request Intake, Customer Insights, Technical Specification) maintains **separate Claude conversation contexts**. Information flows between agents via structured data passing:
+- CSM → Structured Request → **Customer Insights Repository**
 - PM → Feature Requirements → Tech Agent (via system message)
 - Tech Agent → Technical Spec → Engineering Lead
 
+### Insights Repository vs Queue
+The **Customer Insights Repository** is not a mechanical queue to be processed. Instead, it's a **conversational knowledge base** that the PM explores through natural language queries. The PM asks analytical questions (e.g., "What patterns do you see?", "Which Enterprise customers need export features?") to discover patterns, synthesize across insights, and make informed product decisions.
+
 ### State & Session Management
 - **Session-based isolation**: Each user gets their own demo session (2-hour expiry)
-- **In-memory queue**: PM queue stored in-memory per session
+- **In-memory insights repository**: Customer insights stored in-memory per session
 - **No database required**: Ephemeral state acceptable for demo
-- **Cloud-ready architecture**: Abstract queue service allows easy upgrade to database later
+- **Cloud-ready architecture**: Abstract insights service allows easy upgrade to database later
 
 ### Deployment Platform
 **Fly.io** (Free tier):
@@ -203,54 +206,54 @@ Each agent (Request Intake, Product Queue, Technical Specification) maintains **
 
 **Validation:** Full conversation flow works between CSM and intake agent ✓
 
-### Step 5.5: Add Request to PM Queue ✓
-- [x] Add "Add to PM Queue" button to CSM window
+### Step 5.5: Submit Customer Insights ✓
+- [x] Add "Submit Insight" button to CSM window
 - [x] Enable button only when request is structured and complete
-- [x] Implement action to add structured request to PM queue
+- [x] Implement action to submit structured request as customer insight
 - [x] Show confirmation message in CSM window
-- [x] Update activity feed with queue addition
+- [x] Update activity feed with insight submission
 
-**Validation:** CSM can successfully add completed requests to PM queue ✓
+**Validation:** CSM can successfully submit customer insights to PM ✓
 
 ---
 
-## Phase 6: Product Queue Agent (PM Stage)
+## Phase 6: Customer Insights Agent (PM Stage)
 
-### Step 6.1: Queue Agent Prompt Engineering
-- [ ] Create `server/agents/queueAgent.js`
-- [ ] Write system prompt for Product Queue Agent
-- [ ] Define synthesizer and orchestrator personality
-- [ ] Specify query capabilities
-- [ ] Add queue access instructions
+### Step 6.1: Insights Agent Prompt Engineering
+- [ ] Create `server/agents/insightsAgent.js`
+- [ ] Write system prompt for Customer Insights Agent
+- [ ] Define analytical and synthesis personality
+- [ ] Specify conversational query capabilities
+- [ ] Add insights repository access instructions
 
 **Validation:** Test prompt with sample queries, verify synthesis behavior
 
-### Step 6.2: Queue Management
-- [ ] Create `server/services/queueService.js` with abstraction layer
-- [ ] Implement session-based queue storage (in-memory Map)
+### Step 6.2: Insights Repository Management
+- [ ] Create `server/services/insightsService.js` with abstraction layer
+- [ ] Implement session-based insights storage (in-memory Map)
 - [ ] Add session middleware for user isolation
-- [ ] Add requests to queue from CSM conversations
-- [ ] Provide queue context to agent
-- [ ] Implement queue query functions (filter, group, sort)
+- [ ] Accept submitted insights from CSM
+- [ ] Provide insights context to agent
+- [ ] Implement insight query functions (filter, group, aggregate)
 - [ ] Add session cleanup for expired sessions (2-hour TTL)
 
-**Validation:** Queue correctly stores and retrieves requests per session
+**Validation:** Repository correctly stores and retrieves insights per session
 
-### Step 6.3: Queue Agent Query Capabilities
-- [ ] Implement pattern matching across requests
+### Step 6.3: Insights Agent Query Capabilities
+- [ ] Implement pattern matching across insights
 - [ ] Add aggregation functions (total ARR, customer count)
-- [ ] Implement grouping by criteria (urgency, category)
-- [ ] Add theme/pattern identification
+- [ ] Implement grouping by criteria (urgency, category, customer tier)
+- [ ] Add theme/pattern identification across insights
 
-**Validation:** Agent responds accurately to various query types
+**Validation:** Agent responds accurately to various analytical queries
 
 ### Step 6.4: PM Conversation UI Integration
-- [ ] Connect PM RoleWindow to queue agent endpoint
+- [ ] Connect PM RoleWindow to insights agent endpoint
 - [ ] Implement message sending from UI
 - [ ] Display agent responses with formatted data
 - [ ] Add loading state during API calls
 
-**Validation:** PM can query queue successfully
+**Validation:** PM can query insights successfully
 
 ### Step 6.5: Tech Agent Triggering
 - [ ] Detect when PM requests technical feasibility
@@ -258,7 +261,7 @@ Each agent (Request Intake, Product Queue, Technical Specification) maintains **
 - [ ] Update activity feed with tech agent status
 - [ ] Store technical analysis request
 
-**Validation:** Queue agent recognizes feasibility request and triggers tech agent
+**Validation:** Insights agent recognizes feasibility request and triggers tech agent
 
 ### Step 6.6: Share Technical Spec with Engineering
 - [ ] Add "Share with Engineering" button to PM window

@@ -78,33 +78,34 @@ router.post('/intake', validateAgentRequest, async (req, res) => {
 });
 
 /**
- * POST /api/agents/queue
- * Product Queue Agent (PM) - Manages and analyzes feature request queue
+ * POST /api/agents/insights
+ * Customer Insights Agent (PM) - Analyzes customer insights repository
  */
-router.post('/queue', validateAgentRequest, async (req, res) => {
+router.post('/insights', validateAgentRequest, async (req, res) => {
   try {
     const { message, conversationHistory = [] } = req.body;
 
     // Build messages array
     const messages = buildMessagesArray(conversationHistory, message);
 
-    // System prompt for Product Queue Agent
-    const systemPrompt = `You are a Product Queue Agent for a Product Manager.
+    // System prompt for Customer Insights Agent
+    const systemPrompt = `You are a Customer Insights Agent for a Product Manager.
 
 Your role:
-- Help PMs analyze and synthesize across feature request queues
-- Identify patterns and themes across requests
-- Provide insights on urgency, customer impact, and ARR implications
-- Query and aggregate data from the queue
+- Help PMs explore and analyze customer insights through conversation
+- Identify patterns and themes across customer requests
+- Provide strategic insights on urgency, customer impact, and ARR implications
+- Answer analytical questions about the insights repository
 - Coordinate with the Technical Specification Agent when needed
 
 Capabilities:
-- Pattern matching across requests
+- Pattern matching and synthesis across insights
 - Aggregating ARR and customer counts
 - Grouping by urgency, category, or customer tier
-- Identifying themes in feature requests
+- Identifying themes and trends in customer needs
+- Answering conversational queries (e.g., "What do Enterprise customers want?")
 
-Keep responses analytical and data-driven.`;
+Keep responses analytical, conversational, and data-driven. You're not processing a queue mechanically - you're helping the PM understand customer needs through exploration and analysis.`;
 
     // Send to Claude API
     const response = await sendMessage({
@@ -125,10 +126,10 @@ Keep responses analytical and data-driven.`;
     });
 
   } catch (error) {
-    console.error('Queue agent error:', error);
+    console.error('Insights agent error:', error);
     res.status(500).json({
       error: 'Agent Error',
-      message: error.message || 'Failed to process request with queue agent'
+      message: error.message || 'Failed to process request with insights agent'
     });
   }
 });

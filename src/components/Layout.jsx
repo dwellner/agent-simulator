@@ -14,36 +14,36 @@ function Layout() {
     engMessages,
     activities,
     structuredRequest,
-    featureQueue,
+    customerInsights,
     csmLoading,
     pmLoading,
     engLoading,
     handleCsmMessage,
     handlePmMessage,
     handleEngMessage,
-    addToQueue,
+    submitInsight,
     resetWorkflow
   } = useWorkflowState();
 
-  // Handle adding request to PM queue
-  const handleAddToQueue = () => {
-    addToQueue();
+  // Handle submitting insight to PM
+  const handleSubmitInsight = () => {
+    submitInsight();
     setJustAddedToQueue(true);
     setTimeout(() => setJustAddedToQueue(false), 2000);
   };
 
-  // Check if we can add to queue (request exists and has minimum completeness)
-  const canAddToQueue = structuredRequest && structuredRequest.meta.completeness >= 50;
+  // Check if we can submit insight (request exists and has minimum completeness)
+  const canSubmitInsight = structuredRequest && structuredRequest.meta.completeness >= 50;
 
-  // Create the Add to Queue button for CSM window
-  const addToQueueButton = (
+  // Create the Submit Insight button for CSM window
+  const submitInsightButton = (
     <button
-      onClick={handleAddToQueue}
-      disabled={!canAddToQueue || justAddedToQueue}
+      onClick={handleSubmitInsight}
+      disabled={!canSubmitInsight || justAddedToQueue}
       className={`action-button ${justAddedToQueue ? 'success' : ''}`}
-      title={!canAddToQueue ? 'Complete the request details first' : 'Add this request to the PM queue'}
+      title={!canSubmitInsight ? 'Complete the request details first' : 'Submit this customer insight to PM'}
     >
-      {justAddedToQueue ? '✓ Added to Queue!' : '+ Add to PM Queue'}
+      {justAddedToQueue ? '✓ Insight Submitted!' : 'Submit Insight'}
     </button>
   );
 
@@ -63,7 +63,7 @@ function Layout() {
             messages={csmMessages}
             onSendMessage={handleCsmMessage}
             isLoading={csmLoading}
-            actionButton={addToQueueButton}
+            actionButton={submitInsightButton}
           />
 
           <RoleWindow
