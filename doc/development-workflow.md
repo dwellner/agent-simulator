@@ -23,12 +23,36 @@ This document outlines the agreed-upon development workflow for the AI-Enhanced 
    - Complete each step fully before moving to the next
    - Test and validate according to the validation criteria in each step
 
-3. **After Completing Work**
+3. **Manual Validation & Testing**
+   - After completing implementation, suggest specific manual validation steps to the user
+   - Wait for user confirmation that validation passed before marking step as complete
+   - Be transparent about what can/cannot be automatically validated
+   - Never mark UI/browser-based features as validated without user confirmation
+
+   **Validation Suggestions Should Include:**
+   - Specific actions to perform (e.g., "Click the CSM input field and type a message")
+   - Expected outcomes (e.g., "You should see the message appear in the chat window")
+   - Regression checks (e.g., "Verify the PM and Engineering windows still work")
+   - Edge cases if applicable (e.g., "Try sending an empty message")
+
+   **Example Validation Prompt:**
+   ```
+   Step X.X is implemented. To validate:
+   1. Open http://localhost:5173 in your browser
+   2. [Specific action to test new feature]
+   3. [Specific action to test existing features still work]
+
+   Please confirm:
+   - Does [new feature] work as expected?
+   - Do [existing features] still work (no regression)?
+   ```
+
+4. **After Validation Confirmed**
    - Update plan.md to check off completed items (`- [ ]` → `- [x]`)
-   - Verify validation criteria are met
+   - Mark validation criteria as met with ✓
    - Commit both the code changes and the updated plan.md
 
-4. **When Plans Change**
+5. **When Plans Change**
    - If requested work doesn't align with current plan, pause and update plan.md first
    - Discuss and agree on plan changes before implementing
    - Keep plan.md synchronized with actual development direction
@@ -52,14 +76,19 @@ This document outlines the agreed-upon development workflow for the AI-Enhanced 
 - If a step feels too large, break it down further
 
 ### Testing Requirements
-- Each step includes validation criteria
-- Test before marking step as complete
+- Each step includes validation criteria in plan.md
+- AI assistant suggests specific manual validation steps after implementation
+- User performs manual testing and confirms results
+- Steps are only marked complete after user validation confirmation
 - Keep validation criteria realistic and practical
+- Focus on both new functionality and regression prevention
 
 ### Commitment Discipline
-- Only check off items that are truly complete
+- Only check off items that are truly complete AND validated by user
+- If implementation is done but not validated, wait for user confirmation
 - If partially done, leave unchecked and add notes if needed
-- Be honest about progress to maintain plan integrity
+- Be honest and transparent about what has been tested vs. what needs manual validation
+- Never assume UI/browser features work without user confirmation
 
 ---
 

@@ -90,14 +90,14 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Hook manages all parallel conversation state correctly ✓
 
-### Step 3.2: Integrate State Hook into Layout
-- [ ] Import useWorkflowState hook in Layout.jsx
-- [ ] Replace local state with hook state
-- [ ] Verify all three roles remain active simultaneously
-- [ ] Test message handling and activity tracking
-- [ ] Ensure elapsed timer continues to work
+### Step 3.2: Integrate State Hook into Layout ✓
+- [x] Import useWorkflowState hook in Layout.jsx
+- [x] Replace local state with hook state
+- [x] Verify all three roles remain active simultaneously
+- [x] Test message handling and activity tracking
+- [x] Ensure elapsed timer continues to work
 
-**Validation:** Layout component works identically but with cleaner state management
+**Validation:** Layout component works identically but with cleaner state management ✓
 
 ### Step 3.3: Reset Functionality
 - [ ] Implement resetWorkflow function in useWorkflowState hook
