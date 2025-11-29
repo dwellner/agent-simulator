@@ -11,6 +11,9 @@ function useWorkflowState() {
   const [engMessages, setEngMessages] = useState([]);
   const [activities, setActivities] = useState([]);
   const [structuredRequest, setStructuredRequest] = useState(null);
+  const [csmLoading, setCsmLoading] = useState(false);
+  const [pmLoading, setPmLoading] = useState(false);
+  const [engLoading, setEngLoading] = useState(false);
 
   /**
    * Handle CSM (Customer Success Manager) messages
@@ -22,6 +25,7 @@ function useWorkflowState() {
       timestamp: new Date().toISOString()
     };
     setCsmMessages(prev => [...prev, newMessage]);
+    setCsmLoading(true);
 
     // Add agent activity
     setActivities(prev => [...prev, {
@@ -47,7 +51,8 @@ function useWorkflowState() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to get agent response');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -78,19 +83,30 @@ function useWorkflowState() {
     } catch (error) {
       console.error('Error calling intake agent:', error);
 
-      const errorMessage = {
+      // Provide user-friendly error message
+      let errorMessage = 'Failed to process request. ';
+      if (error.message.includes('fetch')) {
+        errorMessage += 'Cannot connect to server. Please make sure the backend is running.';
+      } else {
+        errorMessage += error.message;
+      }
+
+      const errorMsg = {
         role: 'assistant',
-        content: `Error: Failed to process request. ${error.message}`,
-        timestamp: new Date().toISOString()
+        content: `⚠️ ${errorMessage}`,
+        timestamp: new Date().toISOString(),
+        isError: true
       };
-      setCsmMessages(prev => [...prev, errorMessage]);
+      setCsmMessages(prev => [...prev, errorMsg]);
 
       setActivities(prev => [...prev, {
         type: 'error',
         agent: 'Request Intake Agent',
-        message: 'Failed to process request',
+        message: `Error: ${error.message}`,
         timestamp: new Date().toISOString()
       }]);
+    } finally {
+      setCsmLoading(false);
     }
   };
 
@@ -177,6 +193,9 @@ function useWorkflowState() {
     setEngMessages([]);
     setActivities([]);
     setStructuredRequest(null);
+    setCsmLoading(false);
+    setPmLoading(false);
+    setEngLoading(false);
     setStartTime(Date.now());
   };
 
@@ -188,6 +207,9 @@ function useWorkflowState() {
     engMessages,
     activities,
     structuredRequest,
+    csmLoading,
+    pmLoading,
+    engLoading,
 
     // Handlers
     handleCsmMessage,

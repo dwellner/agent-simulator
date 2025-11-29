@@ -5,7 +5,8 @@ function RoleWindow({
   title,
   isActive,
   messages = [],
-  onSendMessage
+  onSendMessage,
+  isLoading = false
 }) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
@@ -45,7 +46,7 @@ function RoleWindow({
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`message ${message.role === 'user' ? 'user-message' : 'agent-message'}`}
+                className={`message ${message.role === 'user' ? 'user-message' : 'agent-message'} ${message.isError ? 'error-message' : ''}`}
               >
                 <div className="message-header">
                   <span className="message-sender">
@@ -62,6 +63,20 @@ function RoleWindow({
                 </div>
               </div>
             ))}
+            {isLoading && (
+              <div className="message agent-message loading-message">
+                <div className="message-header">
+                  <span className="message-sender">AI Agent</span>
+                </div>
+                <div className="message-content">
+                  <div className="loading-indicator">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                  </div>
+                </div>
+              </div>
+            )}
             <div ref={messagesEndRef} />
           </div>
         )}
@@ -73,16 +88,16 @@ function RoleWindow({
             type="text"
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
-            placeholder={isActive ? 'Type your message...' : 'Disabled'}
-            disabled={!isActive}
+            placeholder={isLoading ? 'Agent is thinking...' : isActive ? 'Type your message...' : 'Disabled'}
+            disabled={!isActive || isLoading}
             className="message-input"
           />
           <button
             type="submit"
-            disabled={!isActive || !inputValue.trim()}
+            disabled={!isActive || !inputValue.trim() || isLoading}
             className="send-button"
           >
-            Send
+            {isLoading ? 'Sending...' : 'Send'}
           </button>
         </form>
       </div>

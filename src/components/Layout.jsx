@@ -11,6 +11,9 @@ function Layout() {
     pmMessages,
     engMessages,
     activities,
+    csmLoading,
+    pmLoading,
+    engLoading,
     handleCsmMessage,
     handlePmMessage,
     handleEngMessage,
@@ -32,6 +35,7 @@ function Layout() {
             isActive={true}
             messages={csmMessages}
             onSendMessage={handleCsmMessage}
+            isLoading={csmLoading}
           />
 
           <RoleWindow
@@ -39,6 +43,7 @@ function Layout() {
             isActive={true}
             messages={pmMessages}
             onSendMessage={handlePmMessage}
+            isLoading={pmLoading}
           />
 
           <RoleWindow
@@ -46,6 +51,7 @@ function Layout() {
             isActive={true}
             messages={engMessages}
             onSendMessage={handleEngMessage}
+            isLoading={engLoading}
           />
         </section>
 
