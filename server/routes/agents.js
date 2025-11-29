@@ -63,7 +63,9 @@ router.post('/intake', validateAgentRequest, async (req, res) => {
       success: true,
       response: result.response,
       usage: result.usage,
-      contextFound: result.contextFound
+      contextFound: result.contextFound,
+      structuredRequest: result.structuredRequest,
+      requestSummary: result.requestSummary
     });
 
   } catch (error) {

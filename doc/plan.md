@@ -186,13 +186,13 @@ Each agent (Request Intake, Product Queue, Technical Specification) maintains **
 
 **Validation:** Agent references customer data in responses ✓
 
-### Step 5.3: Intake Agent Structured Output
-- [ ] Define structured request format (JSON schema)
-- [ ] Implement extraction of structured data from conversation
-- [ ] Store structured request in state
-- [ ] Generate summary for CSM approval
+### Step 5.3: Intake Agent Structured Output ✓
+- [x] Define structured request format (JSON schema)
+- [x] Implement extraction of structured data from conversation
+- [x] Store structured request in state
+- [x] Generate summary for CSM approval
 
-**Validation:** Agent produces valid structured request data
+**Validation:** Agent produces valid structured request data ✓
 
 ### Step 5.4: CSM Conversation UI Integration
 - [ ] Connect CSM RoleWindow to intake agent endpoint

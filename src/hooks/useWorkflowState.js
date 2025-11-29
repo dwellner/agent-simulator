@@ -10,11 +10,12 @@ function useWorkflowState() {
   const [pmMessages, setPmMessages] = useState([]);
   const [engMessages, setEngMessages] = useState([]);
   const [activities, setActivities] = useState([]);
+  const [structuredRequest, setStructuredRequest] = useState(null);
 
   /**
    * Handle CSM (Customer Success Manager) messages
    */
-  const handleCsmMessage = (message) => {
+  const handleCsmMessage = async (message) => {
     const newMessage = {
       role: 'user',
       content: message,
@@ -30,22 +31,67 @@ function useWorkflowState() {
       timestamp: new Date().toISOString()
     }]);
 
-    // Simulate agent response
-    setTimeout(() => {
+    try {
+      // Call the intake agent API
+      const conversationHistory = csmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
+
+      const response = await fetch('http://localhost:3001/api/agents/intake', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message,
+          conversationHistory
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get agent response');
+      }
+
+      const data = await response.json();
+
+      // Add agent response to messages
       const agentMessage = {
-        role: 'agent',
-        content: 'This is a demo response from the Request Intake Agent. In the full implementation, this will connect to the Claude API.',
+        role: 'assistant',
+        content: data.response,
         timestamp: new Date().toISOString()
       };
       setCsmMessages(prev => [...prev, agentMessage]);
 
+      // Store the structured request
+      if (data.structuredRequest) {
+        setStructuredRequest(data.structuredRequest);
+        console.log('Structured Request:', data.structuredRequest);
+        console.log('Request Summary:', data.requestSummary);
+      }
+
+      // Add completion activity
       setActivities(prev => [...prev, {
         type: 'complete',
         agent: 'Request Intake Agent',
-        message: 'Response generated successfully',
+        message: `Response generated (Completeness: ${data.structuredRequest?.meta?.completeness || 0}%)`,
         timestamp: new Date().toISOString()
       }]);
-    }, 1000);
+
+    } catch (error) {
+      console.error('Error calling intake agent:', error);
+
+      const errorMessage = {
+        role: 'assistant',
+        content: `Error: Failed to process request. ${error.message}`,
+        timestamp: new Date().toISOString()
+      };
+      setCsmMessages(prev => [...prev, errorMessage]);
+
+      setActivities(prev => [...prev, {
+        type: 'error',
+        agent: 'Request Intake Agent',
+        message: 'Failed to process request',
+        timestamp: new Date().toISOString()
+      }]);
+    }
   };
 
   /**
@@ -130,6 +176,7 @@ function useWorkflowState() {
     setPmMessages([]);
     setEngMessages([]);
     setActivities([]);
+    setStructuredRequest(null);
     setStartTime(Date.now());
   };
 
@@ -140,6 +187,7 @@ function useWorkflowState() {
     pmMessages,
     engMessages,
     activities,
+    structuredRequest,
 
     // Handlers
     handleCsmMessage,
