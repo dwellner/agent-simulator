@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import RoleWindow from './RoleWindow';
 import WorkflowTimeline from './WorkflowTimeline';
 import AgentActivityFeed from './AgentActivityFeed';
@@ -5,20 +6,46 @@ import useWorkflowState from '../hooks/useWorkflowState';
 import './Layout.css';
 
 function Layout() {
+  const [justAddedToQueue, setJustAddedToQueue] = useState(false);
   const {
     startTime,
     csmMessages,
     pmMessages,
     engMessages,
     activities,
+    structuredRequest,
+    featureQueue,
     csmLoading,
     pmLoading,
     engLoading,
     handleCsmMessage,
     handlePmMessage,
     handleEngMessage,
+    addToQueue,
     resetWorkflow
   } = useWorkflowState();
+
+  // Handle adding request to PM queue
+  const handleAddToQueue = () => {
+    addToQueue();
+    setJustAddedToQueue(true);
+    setTimeout(() => setJustAddedToQueue(false), 2000);
+  };
+
+  // Check if we can add to queue (request exists and has minimum completeness)
+  const canAddToQueue = structuredRequest && structuredRequest.meta.completeness >= 50;
+
+  // Create the Add to Queue button for CSM window
+  const addToQueueButton = (
+    <button
+      onClick={handleAddToQueue}
+      disabled={!canAddToQueue || justAddedToQueue}
+      className={`action-button ${justAddedToQueue ? 'success' : ''}`}
+      title={!canAddToQueue ? 'Complete the request details first' : 'Add this request to the PM queue'}
+    >
+      {justAddedToQueue ? '✓ Added to Queue!' : '+ Add to PM Queue'}
+    </button>
+  );
 
   return (
     <div className="layout">
@@ -36,6 +63,7 @@ function Layout() {
             messages={csmMessages}
             onSendMessage={handleCsmMessage}
             isLoading={csmLoading}
+            actionButton={addToQueueButton}
           />
 
           <RoleWindow

@@ -6,7 +6,8 @@ function RoleWindow({
   isActive,
   messages = [],
   onSendMessage,
-  isLoading = false
+  isLoading = false,
+  actionButton = null
 }) {
   const [inputValue, setInputValue] = useState('');
   const messagesEndRef = useRef(null);
@@ -100,6 +101,11 @@ function RoleWindow({
             {isLoading ? 'Sending...' : 'Send'}
           </button>
         </form>
+        {actionButton && (
+          <div className="role-action">
+            {actionButton}
+          </div>
+        )}
       </div>
     </div>
   );

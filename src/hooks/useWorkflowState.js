@@ -14,6 +14,7 @@ function useWorkflowState() {
   const [csmLoading, setCsmLoading] = useState(false);
   const [pmLoading, setPmLoading] = useState(false);
   const [engLoading, setEngLoading] = useState(false);
+  const [featureQueue, setFeatureQueue] = useState([]);
 
   /**
    * Handle CSM (Customer Success Manager) messages
@@ -185,6 +186,39 @@ function useWorkflowState() {
   };
 
   /**
+   * Add current structured request to PM queue
+   */
+  const addToQueue = () => {
+    if (!structuredRequest) {
+      console.warn('No structured request to add to queue');
+      return;
+    }
+
+    // Add unique ID and submission timestamp
+    const queueItem = {
+      ...structuredRequest,
+      queueId: `queue-${Date.now()}`,
+      submittedAt: new Date().toISOString(),
+      submittedBy: 'CSM'
+    };
+
+    setFeatureQueue(prev => [...prev, queueItem]);
+
+    // Add activity
+    setActivities(prev => [...prev, {
+      type: 'queue',
+      agent: 'Request Intake Agent',
+      message: `Added "${structuredRequest.request.title || 'feature request'}" to PM queue (${structuredRequest.customer.companyName})`,
+      timestamp: new Date().toISOString()
+    }]);
+
+    // Reset structured request for next intake
+    setStructuredRequest(null);
+
+    return queueItem;
+  };
+
+  /**
    * Reset all workflow state
    */
   const resetWorkflow = () => {
@@ -193,6 +227,7 @@ function useWorkflowState() {
     setEngMessages([]);
     setActivities([]);
     setStructuredRequest(null);
+    setFeatureQueue([]);
     setCsmLoading(false);
     setPmLoading(false);
     setEngLoading(false);
@@ -207,6 +242,7 @@ function useWorkflowState() {
     engMessages,
     activities,
     structuredRequest,
+    featureQueue,
     csmLoading,
     pmLoading,
     engLoading,
@@ -217,6 +253,7 @@ function useWorkflowState() {
     handleEngMessage,
 
     // Actions
+    addToQueue,
     resetWorkflow
   };
 }

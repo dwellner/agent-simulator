@@ -203,14 +203,14 @@ Each agent (Request Intake, Product Queue, Technical Specification) maintains **
 
 **Validation:** Full conversation flow works between CSM and intake agent ✓
 
-### Step 5.5: Add Request to PM Queue
-- [ ] Add "Add to PM Queue" button to CSM window
-- [ ] Enable button only when request is structured and complete
-- [ ] Implement action to add structured request to PM queue
-- [ ] Show confirmation message in CSM window
-- [ ] Update activity feed with queue addition
+### Step 5.5: Add Request to PM Queue ✓
+- [x] Add "Add to PM Queue" button to CSM window
+- [x] Enable button only when request is structured and complete
+- [x] Implement action to add structured request to PM queue
+- [x] Show confirmation message in CSM window
+- [x] Update activity feed with queue addition
 
-**Validation:** CSM can successfully add completed requests to PM queue
+**Validation:** CSM can successfully add completed requests to PM queue ✓
 
 ---
 

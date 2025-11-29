@@ -212,6 +212,40 @@
   opacity: 0.5;
 }
 
+.role-action {
+  margin-top: 0.5rem;
+}
+
+.action-button {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.action-button:hover:not(:disabled) {
+  background-color: #059669;
+}
+
+.action-button:disabled {
+  background-color: #4b5563;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.action-button.success {
+  background-color: #059669;
+}
+
 .handoff-button {
   width: 100%;
   padding: 0.75rem;
