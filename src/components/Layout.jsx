@@ -13,7 +13,8 @@ function Layout() {
     activities,
     handleCsmMessage,
     handlePmMessage,
-    handleEngMessage
+    handleEngMessage,
+    resetWorkflow
   } = useWorkflowState();
 
   return (
@@ -61,7 +62,7 @@ function Layout() {
       </main>
 
       <footer className="layout-footer">
-        <button className="reset-button" disabled>
+        <button className="reset-button" onClick={resetWorkflow}>
           Reset Demo
         </button>
       </footer>
