@@ -117,3 +117,11 @@ export const getAtRiskCustomers = () => {
 export const getTotalARR = () => {
   return mockCustomers.reduce((total, customer) => total + customer.arr, 0);
 };
+
+// Helper function to get customer by name (case-insensitive partial match)
+export const getCustomerByName = (name) => {
+  const searchName = name.toLowerCase();
+  return mockCustomers.find(customer =>
+    customer.companyName.toLowerCase().includes(searchName)
+  );
+};

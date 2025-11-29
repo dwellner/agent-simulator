@@ -1,5 +1,6 @@
 import express from 'express';
 import { sendMessage, extractTextContent, buildMessage } from '../services/claudeApi.js';
+import { processIntakeMessage } from '../agents/intakeAgent.js';
 
 const router = express.Router();
 
@@ -55,40 +56,13 @@ router.post('/intake', validateAgentRequest, async (req, res) => {
   try {
     const { message, conversationHistory = [] } = req.body;
 
-    // Build messages array
-    const messages = buildMessagesArray(conversationHistory, message);
-
-    // System prompt for Request Intake Agent
-    const systemPrompt = `You are a Request Intake Agent for a Customer Success Manager.
-
-Your role:
-- Help CSMs gather complete information about customer feature requests
-- Ask clarifying questions to understand requirements
-- Be proactive and thorough in collecting details
-- Maintain a friendly, professional tone
-
-For this demo, you have access to:
-- Customer database with ARR, tier, and renewal dates
-- Historical feature requests
-
-Keep responses concise and focused on gathering the right information.`;
-
-    // Send to Claude API
-    const response = await sendMessage({
-      messages,
-      system: systemPrompt,
-      maxTokens: 1024
-    });
-
-    const agentResponse = extractTextContent(response);
+    // Process with intake agent
+    const result = await processIntakeMessage(message, conversationHistory);
 
     res.json({
       success: true,
-      response: agentResponse,
-      usage: {
-        inputTokens: response.usage.input_tokens,
-        outputTokens: response.usage.output_tokens
-      }
+      response: result.response,
+      usage: result.usage
     });
 
   } catch (error) {
