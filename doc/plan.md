@@ -35,9 +35,34 @@ This plan breaks down the development into small, incremental steps that can be 
 
 ---
 
-## Phase 2: Basic UI Layout
+## Architecture Decisions
 
-**Design Decision:** The application uses a **parallel/flexible workflow model** where all three roles (CSM, PM, Engineering Lead) can be active and used simultaneously. This better demonstrates how AI agents work in parallel and supports a pull-based workflow where users can interact with any conversation at any time, in any order.
+### Workflow Model
+The application uses a **parallel/flexible workflow model** where all three roles (CSM, PM, Engineering Lead) can be active and used simultaneously. This better demonstrates how AI agents work in parallel and supports a pull-based workflow where users can interact with any conversation at any time, in any order.
+
+### Agent Context Management
+Each agent (Request Intake, Product Queue, Technical Specification) maintains **separate Claude conversation contexts**. Information flows between agents via structured data passing:
+- CSM → Structured Request → PM Queue
+- PM → Feature Requirements → Tech Agent (via system message)
+- Tech Agent → Technical Spec → Engineering Lead
+
+### State & Session Management
+- **Session-based isolation**: Each user gets their own demo session (2-hour expiry)
+- **In-memory queue**: PM queue stored in-memory per session
+- **No database required**: Ephemeral state acceptable for demo
+- **Cloud-ready architecture**: Abstract queue service allows easy upgrade to database later
+
+### Deployment Platform
+**Fly.io** (Free tier):
+- No cold starts, always-running
+- 3 shared VMs, 160GB transfer, 3GB storage
+- Simple deployment with `fly deploy`
+- Free PostgreSQL available if needed later
+- Cost: $0/month for expected usage
+
+---
+
+## Phase 2: Basic UI Layout
 
 ### Step 2.1: Main Layout Component ✓
 - [x] Create `src/components/Layout.jsx` with basic grid structure
@@ -201,12 +226,15 @@ This plan breaks down the development into small, incremental steps that can be 
 **Validation:** Test prompt with sample queries, verify synthesis behavior
 
 ### Step 6.2: Queue Management
-- [ ] Implement PM queue data structure
+- [ ] Create `server/services/queueService.js` with abstraction layer
+- [ ] Implement session-based queue storage (in-memory Map)
+- [ ] Add session middleware for user isolation
 - [ ] Add requests to queue from CSM conversations
 - [ ] Provide queue context to agent
 - [ ] Implement queue query functions (filter, group, sort)
+- [ ] Add session cleanup for expired sessions (2-hour TTL)
 
-**Validation:** Queue correctly stores and retrieves requests
+**Validation:** Queue correctly stores and retrieves requests per session
 
 ### Step 6.3: Queue Agent Query Capabilities
 - [ ] Implement pattern matching across requests
@@ -440,14 +468,47 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** New developer can set up project following README
 
-### Step 12.4: Deployment
-- [ ] Choose deployment platform (Heroku, Vercel, Railway, etc.)
-- [ ] Configure deployment settings
-- [ ] Deploy application
-- [ ] Test deployed version
-- [ ] Set up monitoring/logging
+### Step 12.4: Fly.io Account Setup (Manual)
+**User Action Required:**
+- [ ] Visit https://fly.io/app/sign-up
+- [ ] Sign up with GitHub, Google, or Email
+- [ ] Verify email address
+- [ ] No credit card required for free tier
+- [ ] Install Fly CLI: `curl -L https://fly.io/install.sh | sh` (macOS/Linux)
+  - Or download from: https://fly.io/docs/hands-on/install-flyctl/
+- [ ] Authenticate CLI: `fly auth login`
 
-**Validation:** Application runs successfully in production
+**Validation:** Fly CLI installed and authenticated
+
+### Step 12.5: Fly.io Deployment Configuration
+- [ ] Run `fly launch` to create fly.toml configuration
+- [ ] Configure build settings for Node.js + Vite
+- [ ] Set environment variables: `fly secrets set CLAUDE_API_KEY=...`
+- [ ] Configure internal port (3001)
+- [ ] Set app region (choose closest to target users)
+- [ ] Review and adjust fly.toml settings
+
+**Validation:** fly.toml created and configured correctly
+
+### Step 12.6: Deploy to Fly.io
+- [ ] Build production assets locally to verify
+- [ ] Deploy: `fly deploy`
+- [ ] Monitor deployment logs
+- [ ] Test deployed version at https://[app-name].fly.dev
+- [ ] Verify health check endpoint
+- [ ] Test all three agent conversations
+- [ ] Verify session isolation works
+
+**Validation:** Application runs successfully on Fly.io
+
+### Step 12.7: Post-Deployment Setup
+- [ ] Set up Fly.io monitoring (included in free tier)
+- [ ] Configure auto-scaling limits (min: 1, max: 1 for free tier)
+- [ ] Add deployment documentation to README
+- [ ] Document environment variables needed
+- [ ] Create troubleshooting guide for common Fly.io issues
+
+**Validation:** Monitoring active and documentation complete
 
 ---
 
