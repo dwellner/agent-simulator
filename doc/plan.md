@@ -78,32 +78,36 @@ This plan breaks down the development into small, incremental steps that can be 
 
 ## Phase 3: State Management
 
+**Note:** In the parallel workflow model, all state is managed simultaneously. We refactor existing state from Layout.jsx into a custom hook for better organization and reusability.
+
 ### Step 3.1: Workflow State Hook
 - [ ] Create `src/hooks/useWorkflowState.js`
-- [ ] Implement state for current active role (CSM/PM/Engineering)
-- [ ] Add conversation history arrays (one per role)
-- [ ] Add workflow stage tracking
-- [ ] Add elapsed time tracking
-- [ ] Implement reset functionality
+- [ ] Extract conversation history arrays from Layout.jsx (csmMessages, pmMessages, engMessages)
+- [ ] Extract activity log state and addActivity function
+- [ ] Extract elapsed time tracking
+- [ ] Implement reset functionality (clear all conversations, activities, and reset timer)
+- [ ] Export message handlers (handleCsmMessage, handlePmMessage, handleEngMessage)
 
-**Validation:** Hook manages state transitions correctly
+**Validation:** Hook manages all parallel conversation state correctly
 
-### Step 3.2: Activity Feed State
-- [ ] Add agent activity log state to workflow hook
-- [ ] Implement addActivity function with timestamp
-- [ ] Add activity types (agent_working, agent_complete, agent_search)
-- [ ] Store activity metadata (agent name, role, message)
+### Step 3.2: Integrate State Hook into Layout
+- [ ] Import useWorkflowState hook in Layout.jsx
+- [ ] Replace local state with hook state
+- [ ] Verify all three roles remain active simultaneously
+- [ ] Test message handling and activity tracking
+- [ ] Ensure elapsed timer continues to work
 
-**Validation:** Activities can be added and retrieved from state
+**Validation:** Layout component works identically but with cleaner state management
 
-### Step 3.3: Role Transition Logic
-- [ ] Implement handoff function (CSM → PM, PM → Engineering)
-- [ ] Disable current role input on handoff
-- [ ] Enable next role input
-- [ ] Update timeline state
-- [ ] Preserve conversation history
+### Step 3.3: Reset Functionality
+- [ ] Implement resetWorkflow function in useWorkflowState hook
+- [ ] Clear all conversation arrays
+- [ ] Clear activity log
+- [ ] Reset start time to current time
+- [ ] Connect reset button in Layout.jsx to resetWorkflow
+- [ ] Enable reset button (currently disabled)
 
-**Validation:** Handoff transitions work correctly through all stages
+**Validation:** Reset button clears all state and restarts demo
 
 ---
 
@@ -174,14 +178,14 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Full conversation flow works between CSM and intake agent
 
-### Step 5.5: CSM Handoff Button
-- [ ] Add "Hand off to Product Manager" button to CSM window
-- [ ] Enable button only when request is complete
-- [ ] Implement handoff action
-- [ ] Add request to PM queue
-- [ ] Transition to PM stage
+### Step 5.5: Add Request to PM Queue
+- [ ] Add "Add to PM Queue" button to CSM window
+- [ ] Enable button only when request is structured and complete
+- [ ] Implement action to add structured request to PM queue
+- [ ] Show confirmation message in CSM window
+- [ ] Update activity feed with queue addition
 
-**Validation:** CSM can successfully hand off to PM
+**Validation:** CSM can successfully add completed requests to PM queue
 
 ---
 
@@ -198,7 +202,7 @@ This plan breaks down the development into small, incremental steps that can be 
 
 ### Step 6.2: Queue Management
 - [ ] Implement PM queue data structure
-- [ ] Add requests to queue from CSM handoff
+- [ ] Add requests to queue from CSM conversations
 - [ ] Provide queue context to agent
 - [ ] Implement queue query functions (filter, group, sort)
 
@@ -228,13 +232,14 @@ This plan breaks down the development into small, incremental steps that can be 
 
 **Validation:** Queue agent recognizes feasibility request and triggers tech agent
 
-### Step 6.6: PM Handoff Button
-- [ ] Add "Hand off to Engineering Lead" button to PM window
-- [ ] Enable button after technical analysis
-- [ ] Implement handoff action
-- [ ] Transition to Engineering stage
+### Step 6.6: Share Technical Spec with Engineering
+- [ ] Add "Share with Engineering" button to PM window
+- [ ] Enable button after technical analysis is complete
+- [ ] Make technical spec available to Engineering Lead
+- [ ] Show spec summary in Engineering window
+- [ ] Update activity feed with sharing action
 
-**Validation:** PM can successfully hand off to Engineering
+**Validation:** PM can successfully share technical specifications with Engineering
 
 ---
 
@@ -336,15 +341,15 @@ This plan breaks down the development into small, incremental steps that can be 
 ### Step 10.1: Timing and Pacing
 - [ ] Add elapsed time counter (starts at demo begin)
 - [ ] Update timeline progress indicators
-- [ ] Add smooth transitions between stages
+- [ ] Add smooth animations for message appearance
 - [ ] Implement appropriate loading states
 
 **Validation:** Demo flow feels smooth and professional
 
 ### Step 10.2: Reset Functionality
 - [ ] Implement reset button functionality
-- [ ] Clear all conversation history
-- [ ] Reset workflow to CSM stage
+- [ ] Clear all conversation history for all roles
+- [ ] Clear PM queue and Engineering specs
 - [ ] Clear activity feed
 - [ ] Reset timer
 
@@ -384,7 +389,7 @@ This plan breaks down the development into small, incremental steps that can be 
 - [ ] Test full PM query flow
 - [ ] Test full Engineering refinement flow
 - [ ] Test agent-to-agent coordination
-- [ ] Test handoff transitions
+- [ ] Test parallel multi-role workflows
 
 **Validation:** All integration tests pass
 
