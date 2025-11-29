@@ -8,6 +8,8 @@ An interactive React-based demonstration application that shows how AI agents tr
 
 **Goal:** Demonstrate how AI agents fundamentally restructure workflows (not just make individuals more productive) by showing a realistic feature request workflow enhanced with real AI agents.
 
+**Workflow Model:** Parallel/flexible workflow where all three roles (CSM, PM, Engineering Lead) can be active and used simultaneously. This better demonstrates how AI agents work in parallel and supports a pull-based workflow where users can interact with any conversation at any time, in any order.
+
 ---
 
 ## Application Architecture
@@ -26,11 +28,11 @@ An interactive React-based demonstration application that shows how AI agents tr
    - Structures and enriches feature requests through conversation
    - Has access to customer database and past request history
 
-2. **Product Queue Agent**
+2. **Customer Insights Agent**
    - Partners with Product Manager
-   - Synthesizes and queries across all queued requests
-   - Coordinates with Technical Specification Agent
-   - Provides strategic insights and pattern recognition
+   - Helps PM explore and analyze customer insights through conversation
+   - Identifies patterns and themes across customer requests
+   - Provides strategic insights on urgency, customer impact, and ARR implications
 
 3. **Technical Specification Agent**
    - Partners with Engineering Lead
@@ -38,7 +40,7 @@ An interactive React-based demonstration application that shows how AI agents tr
    - Works both autonomously (initial analysis) and conversationally (refinement)
    - Has access to codebase structure and past implementations
 
-**Note:** No separate Orchestrator Agent. The Product Queue Agent handles coordination with the Technical Specification Agent.
+**Note:** No separate Orchestrator Agent. The Customer Insights Agent can coordinate with the Technical Specification Agent when needed.
 
 ---
 
@@ -59,37 +61,35 @@ An interactive React-based demonstration application that shows how AI agents tr
    - Searches for similar past requests
    - Checks customer history and tier
    - Identifies patterns across customer base
-4. Agent presents structured summary for CSM approval
-5. Request enters Product Manager's queue as "query-ready" structured data
-6. CSM clicks **"Hand off to Product Manager"**
+4. Agent presents structured summary with completeness score
+5. CSM reviews and clicks **"Submit Insight"** when ready (requires ≥50% completeness)
+6. Insight is added to PM's insights repository for exploration
 
-**Key Innovation:** Request is now fully structured and contextualized before PM sees it.
+**Key Innovation:** Request is now fully structured and contextualized before PM sees it. The CSM can continue working on other requests - the workflow is parallel, not sequential.
 
 ---
 
-### Stage 2: PM + Product Queue Agent
+### Stage 2: PM + Customer Insights Agent
 
-**Objective:** Enable PM to query and synthesize across entire queue, not review individual tickets
+**Objective:** Enable PM to explore and analyze customer insights through conversation, not mechanically process a queue
 
 **Flow:**
-1. PM queries queue conversationally with natural language:
-   - "What's urgent this week?"
-   - "Show me export-related requests"
-   - "Give me the full list"
-   - "Group by business impact"
-   - "What themes are emerging?"
-2. Product Queue Agent synthesizes across multiple requests:
-   - Groups related requests
+1. PM explores insights conversationally with natural language:
+   - "What patterns do you see in recent insights?"
+   - "Which Enterprise customers are requesting export features?"
+   - "What's the total ARR impact of mobile app requests?"
+   - "Show me high-urgency insights from this quarter"
+   - "What themes are emerging across customer segments?"
+2. Customer Insights Agent synthesizes across insights repository:
    - Identifies patterns and themes
-   - Calculates aggregate business impact
-   - Provides proactive alerts for time-sensitive items
-3. PM drills down on specific items or groups
-4. PM decides to move forward: "Get me technical feasibility for [request]"
-5. Product Queue Agent triggers Technical Specification Agent (user sees this in activity feed)
-6. PM reviews technical analysis
-7. PM clicks **"Hand off to Engineering Lead"**
+   - Aggregates ARR and customer counts
+   - Groups by urgency, category, or customer tier
+   - Provides strategic context on customer impact
+3. PM drills down through follow-up questions
+4. PM decides to move forward: "Let me discuss technical feasibility with Engineering"
+5. PM can switch to Engineering Lead window at any time (parallel workflow)
 
-**Key Innovation:** PM never manually reviews individual tickets. They query strategically and get synthesized intelligence.
+**Key Innovation:** PM explores insights through conversation, not mechanical queue processing. The insights repository is a knowledge base, not a FIFO queue.
 
 ---
 
@@ -132,17 +132,17 @@ An interactive React-based demonstration application that shows how AI agents tr
 │                                                                  │
 │  ┌──────────────────┐ ┌──────────────────┐ ┌─────────────────┐│
 │  │ CSM              │ │ Product Manager  │ │ Eng Lead        ││
-│  │ [Active ✓]       │ │ [Waiting...]     │ │ [Waiting...]    ││
+│  │ [Active ✓]       │ │ [Active ✓]       │ │ [Active ✓]      ││
 │  ├──────────────────┤ ├──────────────────┤ ├─────────────────┤│
 │  │ 💬 Chat with     │ │ 💬 Chat with     │ │ 💬 Chat with    ││
-│  │ Intake Agent     │ │ Queue Agent      │ │ Tech Agent      ││
+│  │ Intake Agent     │ │ Insights Agent   │ │ Tech Agent      ││
 │  │                  │ │                  │ │                 ││
 │  │ [Conversation    │ │ [Conversation    │ │ [Conversation   ││
 │  │  history...]     │ │  history...]     │ │  history...]    ││
 │  │                  │ │                  │ │                 ││
 │  │                  │ │                  │ │                 ││
-│  │ [Input field]    │ │ [Disabled]       │ │ [Disabled]      ││
-│  │ [Hand off to PM] │ │                  │ │                 ││
+│  │ [Input field]    │ │ [Input field]    │ │ [Input field]   ││
+│  │ [Submit Insight] │ │                  │ │                 ││
 │  └──────────────────┘ └──────────────────┘ └─────────────────┘│
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────────┐│
@@ -150,15 +150,14 @@ An interactive React-based demonstration application that shows how AI agents tr
 │  │                                                            ││
 │  │ ⚡ Request Intake Agent: Searching for similar requests...││
 │  │ ✓ Found 47 similar cases across 3 customer segments      ││
-│  │ ⚡ Product Queue Agent: Analyzing urgency factors...      ││
+│  │ ⚡ Customer Insights Agent: Analyzing urgency factors...  ││
 │  │ ⚡ Tech Spec Agent: Reviewing export architecture...      ││
 │  │                                                            ││
 │  └────────────────────────────────────────────────────────────┘│
 │                                                                  │
 │  ┌────────────────────────────────────────────────────────────┐│
 │  │ 📊 Workflow Timeline                                       ││
-│  │  [CSM Intake ●════] [PM Review ○────] [Eng Review ○────] ││
-│  │  ✓ 2m 15s elapsed                                         ││
+│  │  [CSM: 3 msgs] [PM: 2 msgs] [Eng: 1 msg] ✓ 2m 15s elapsed││
 │  └────────────────────────────────────────────────────────────┘│
 │                                                                  │
 │  [Reset Demo]                                                   │
@@ -168,12 +167,12 @@ An interactive React-based demonstration application that shows how AI agents tr
 ### Layout Components
 
 **Top Section - Three Conversation Windows (Equal Width):**
-- Customer Success Manager window (left)
-- Product Manager window (center)
-- Engineering Lead window (right)
-- Only active role has enabled input field
-- Inactive roles show conversation history (readonly, slightly grayed)
-- Clear visual indicator of active role (checkmark, border, highlight)
+- Customer Success Manager window (left) - always active
+- Product Manager window (center) - always active
+- Engineering Lead window (right) - always active
+- All roles can be used simultaneously (parallel workflow)
+- Each window has its own independent conversation history
+- "Submit Insight" button appears in CSM window when request is ≥50% complete
 
 **Middle Section - Agent Activity Feed (Full Width):**
 - Shows ALL agent work across the entire system
@@ -183,9 +182,9 @@ An interactive React-based demonstration application that shows how AI agents tr
 - Updates regardless of which role is currently active
 
 **Bottom Section - Workflow Timeline:**
-- Visual progress indicator through three stages
-- Elapsed time counter
-- Stage completion indicators
+- Message count for each role window
+- Elapsed time counter since session start
+- Shows parallel activity across all roles
 
 **Footer:**
 - Reset Demo button (clears all state, starts fresh)
@@ -296,76 +295,72 @@ Ready to submit to Product Manager's queue?"
 
 ---
 
-### Agent 2: Product Queue Agent
+### Agent 2: Customer Insights Agent
 
-**Role:** Strategic synthesizer and orchestrator
+**Role:** Conversational insights explorer and strategic analyst
 
 **Prompt Characteristics:**
-- Synthesizes across multiple requests
-- Identifies patterns and themes
-- Provides strategic insights
-- Knows when to delegate to Technical Specification Agent
-- Proactive with time-sensitive alerts
+- Helps PM explore customer insights through natural conversation
+- Synthesizes patterns and themes across insights
+- Provides strategic context on customer impact and ARR
+- Analytical and data-driven, not mechanical
+- Answers conversational queries about insights repository
 
 **Context/Data Access:**
-- All requests in PM queue (enriched with CSM context)
-- Can trigger Technical Specification Agent
-- Market/competitive data
-- Historical prioritization patterns
+- Customer insights repository (submitted by CSMs with structured data)
+- Customer database and tier information
+- ARR and renewal date data
+- Historical insights and patterns
 
 **Capabilities:**
-- Synthesize and group related requests
-- Calculate aggregate business impact
-- Identify emerging themes
-- Coordinate with Technical Specification Agent
-- Present agent-generated technical analysis
+- Pattern matching and synthesis across insights
+- Aggregating ARR and customer counts
+- Grouping by urgency, category, or customer tier
+- Identifying themes and trends in customer needs
+- Answering conversational queries about insights
 
 **Example Interactions:**
 
-*Query Response:*
+*Pattern Discovery:*
 ```
-User (PM): "What's urgent this week?"
+User (PM): "What patterns do you see in recent insights?"
 
-Agent: "You have 3 high-priority items requiring 
-attention:
+Agent: "Analyzing the last 30 days of customer insights,
+I'm seeing three strong themes:
 
-1. Bulk Export Feature (Acme Corp + 46 others)
-   • $180K ARR at risk across customer base
-   • 4/5 competitors already offer this
-   • 2 contracts renewing within 60 days
-   
-2. SSO Integration (Beta Industries)
-   • Blocking $100K expansion deal
-   • 12 enterprise prospects waiting
-   
-3. API Rate Limit Increase (Multiple customers)
-   • 8 customers affected
-   • Service degradation risk
+1. Data Export & Portability (12 insights, $240K total ARR)
+   • Primarily Enterprise customers (8/12)
+   • Competitive pressure mentioned in 9 cases
+   • 3 high-urgency with renewal deadlines
 
-Would you like me to get technical feasibility 
-for any of these?"
+2. Mobile Experience (8 insights, $180K total ARR)
+   • Mix of Growth and Enterprise tiers
+   • Consistent feature requests: offline mode, notifications
+
+3. Integration Requests (7 insights, $150K total ARR)
+   • SSO, API access, webhook support
+   • Primarily from Enterprise customers
+
+Would you like to explore any of these themes in detail?"
 ```
 
-*Triggering Technical Analysis:*
+*Targeted Query:*
 ```
-User (PM): "Get me technical feasibility for bulk export"
+User (PM): "Which Enterprise customers are requesting export features?"
 
-Agent: "I'm engaging the Technical Specification Agent 
-to analyze this. I'll provide:
-• Architecture assessment
-• Implementation approach options
-• Complexity estimate
-• Risk analysis
+Agent: "I found 8 Enterprise customers requesting export-related
+features:
 
-This will take about 2-3 minutes..."
+• Acme Corp ($50K ARR) - Bulk CSV export, high urgency
+• Beta Industries ($35K ARR) - API export automation
+• GlobalTech ($40K ARR) - Scheduled report exports
+[continues...]
 
-[Activity feed shows Tech Agent working]
+Total ARR impact: $195K
+5 of these have renewal dates within 90 days.
 
-Agent: "Technical analysis complete. The Tech Agent 
-recommends extending our existing export API with a 
-batch queue processor. Estimated as medium complexity 
-(3-5 days). Full details are ready for Engineering 
-Lead review."
+These insights share common technical themes around batch
+processing and format flexibility."
 ```
 
 ---
@@ -390,7 +385,7 @@ Lead review."
 **Modes:**
 
 **Autonomous Mode (Phase A):**
-- Triggered by Product Queue Agent
+- Can be triggered by Customer Insights Agent or directly by Engineering Lead
 - Analyzes technical requirements
 - Reviews relevant codebase components
 - Generates initial specification automatically
@@ -443,53 +438,44 @@ Should I update the spec with this approach?"
 
 ### Step-by-Step Demo Flow
 
-1. **Start Demo**
-   - Application loads with CSM window active
-   - Other roles show "Waiting for handoff..."
-   - Timeline shows CSM stage highlighted
+**Note:** All three windows are active simultaneously. Users can interact with any role at any time, in any order. This demonstrates the parallel, flexible nature of AI-enhanced workflows.
 
-2. **CSM Stage**
-   - User types initial feature request
+1. **Start Demo**
+   - Application loads with all three windows active
+   - Timeline shows 0 messages for each role
+   - Users can start with any role window
+
+2. **CSM Workflow Example**
+   - User types initial feature request in CSM window
    - Request Intake Agent responds with clarifying questions
    - User answers questions
    - Agent activity feed shows: "Searching for similar requests..."
-   - Agent presents structured summary
-   - User clicks **"Hand off to Product Manager"**
+   - Agent presents structured summary with completeness score (e.g., 94%)
+   - User clicks **"Submit Insight"** (enabled when ≥50% complete)
+   - Insight added to PM's insights repository
+   - CSM can immediately start another request - no waiting for PM
 
-3. **Transition to PM**
-   - PM window becomes active
-   - CSM window becomes readonly (grayed)
-   - Timeline updates to show PM stage
-   - PM window shows: "Queue Agent ready. Ask me about your queue."
+3. **PM Workflow Example** (can happen in parallel with CSM)
+   - User types query in PM window: "What patterns do you see in recent insights?"
+   - Customer Insights Agent synthesizes across insights repository
+   - Agent activity feed shows: "Analyzing customer insights..."
+   - User drills down with follow-up questions
+   - PM can explore insights conversationally at their own pace
+   - No mechanical queue processing - insights are a knowledge base to explore
 
-4. **PM Stage**
-   - User types query: "What's urgent this week?"
-   - Product Queue Agent synthesizes and responds
-   - Agent activity feed shows: "Analyzing 23 requests..."
-   - User drills down or asks follow-ups
-   - User types: "Get me technical feasibility for bulk export"
-   - Activity feed shows Tech Agent working autonomously
-   - Product Queue Agent presents technical summary
-   - User clicks **"Hand off to Engineering Lead"**
-
-5. **Transition to Engineering**
-   - Engineering Lead window becomes active
-   - PM window becomes readonly (grayed)
-   - Timeline updates to show Engineering stage
-   - Engineering window shows Tech Agent's analysis already waiting
-
-6. **Engineering Stage**
-   - User reviews technical specification
+4. **Engineering Workflow Example** (can happen in parallel with CSM and PM)
+   - User types in Engineering window: "Review the bulk export feature request"
+   - Tech Agent analyzes codebase and provides technical specification
+   - Agent activity feed shows: "Reviewing export architecture..."
    - User asks refinement questions
    - Tech Agent responds conversationally
-   - User makes modifications through conversation
-   - User approves final approach
+   - User makes decisions through conversation
 
-7. **Demo Complete**
-   - Show final comparison screen:
-     - Traditional workflow: 18 days, 3 meetings
-     - Agent-enhanced workflow: 2 hours, 0 meetings
-   - Option to reset and run another scenario
+5. **Demo Complete**
+   - All three conversations can progress independently
+   - Activity feed shows parallel agent work
+   - Timeline shows message counts for each role
+   - Option to reset and start fresh scenario
 
 ---
 
@@ -497,13 +483,13 @@ Should I update the spec with this approach?"
 
 ### Agent Communication
 
-**Agent-to-Agent (Queue Agent → Tech Agent):**
-- Queue Agent constructs context package for Tech Agent
+**Agent-to-Agent (Insights Agent → Tech Agent):**
+- Customer Insights Agent can construct context package for Tech Agent
 - Includes: feature requirements, business context, customer data
 - Tech Agent receives as system message/context
-- Tech Agent response returned to Queue Agent
-- Queue Agent presents to PM
-- **User sees this happening in activity feed**
+- Tech Agent response can be accessed by PM or Engineering Lead
+- **User sees agent coordination in activity feed**
+- Note: In the parallel model, roles can also interact directly with Tech Agent
 
 ### Streaming Responses
 
@@ -513,20 +499,20 @@ Should I update the spec with this approach?"
 - Update activity feed regardless of active role window
 - Example: "⚡ Analyzing codebase architecture... ✓ Found 3 relevant components"
 
-### State Transitions
+### State Management
 
-**Role Handoff:**
-- Disable current role's input
-- Enable next role's input
-- Update timeline visualization
-- Preserve all conversation history
-- Update active role indicator
+**Parallel Workflow State:**
+- All three role windows maintain independent state
+- All inputs remain enabled (no handoff workflow)
+- Timeline tracks message counts for each role
+- Each conversation history preserved independently
+- Customer insights repository shared between CSM and PM
 
 **Agent Triggers:**
-- CSM submits → Intake Agent processes
-- PM queries → Queue Agent responds
-- PM requests feasibility → Queue Agent triggers Tech Agent
-- Engineering Lead questions → Tech Agent responds
+- CSM message → Request Intake Agent processes
+- PM message → Customer Insights Agent responds
+- Engineering message → Technical Specification Agent responds
+- CSM "Submit Insight" → Insight added to repository (accessible to PM)
 
 ---
 
@@ -534,15 +520,15 @@ Should I update the spec with this approach?"
 
 The demo effectively demonstrates:
 
-✅ **Pull Model:** PM queries queue strategically rather than reviewing individual tickets
+✅ **Conversational Insights:** PM explores insights through conversation, not mechanical queue processing
 
-✅ **Parallel Work:** Agents work in background while humans do other tasks (visible in activity feed)
+✅ **Parallel Workflow:** All roles can work simultaneously, demonstrating flexible AI-enhanced workflows
 
-✅ **Context Preservation:** No information loss across handoffs, complete context flows through
+✅ **Context Preservation:** Structured data flows from CSM to PM insights repository
 
-✅ **Agent Coordination:** Queue Agent successfully coordinates with Tech Agent (visible to user)
+✅ **Agent Coordination:** Agents can coordinate when needed (visible to user in activity feed)
 
-✅ **Time Compression:** Dramatic reduction in elapsed time (weeks → hours)
+✅ **Time Compression:** Dramatic reduction in elapsed time through AI assistance
 
 ✅ **Decision Quality:** Humans make better decisions with agent-prepared, synthesized information
 
