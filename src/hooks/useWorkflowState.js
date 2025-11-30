@@ -204,38 +204,91 @@ function useWorkflowState() {
   /**
    * Handle Engineering Lead messages
    */
-  const handleEngMessage = (message) => {
+  const handleEngMessage = async (message) => {
     const newMessage = {
       role: 'user',
       content: message,
       timestamp: new Date().toISOString()
     };
     setEngMessages(prev => [...prev, newMessage]);
+    setEngLoading(true);
 
     // Add agent activity
     setActivities(prev => [...prev, {
-      type: 'search',
+      type: 'working',
       agent: 'Technical Specification Agent',
       message: 'Reviewing codebase architecture and past implementations...',
       timestamp: new Date().toISOString()
     }]);
 
-    // Simulate agent response
-    setTimeout(() => {
+    try {
+      // Call the tech spec agent API
+      const conversationHistory = engMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
+
+      const response = await fetch('http://localhost:3001/api/agents/techspec', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for session
+        body: JSON.stringify({
+          message,
+          conversationHistory,
+          mode: 'conversational' // Default to conversational mode
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Add agent response to messages
       const agentMessage = {
-        role: 'agent',
-        content: 'This is a demo response from the Technical Specification Agent. In the full implementation, this will connect to the Claude API.',
+        role: 'assistant',
+        content: data.response,
         timestamp: new Date().toISOString()
       };
       setEngMessages(prev => [...prev, agentMessage]);
 
+      // Add completion activity
       setActivities(prev => [...prev, {
         type: 'complete',
         agent: 'Technical Specification Agent',
-        message: 'Technical analysis complete',
+        message: `Technical analysis complete (${data.codebaseContext.componentsCount} components reviewed)`,
         timestamp: new Date().toISOString()
       }]);
-    }, 1000);
+
+    } catch (error) {
+      console.error('Error calling tech spec agent:', error);
+
+      // Provide user-friendly error message
+      let errorMessage = 'Failed to process request. ';
+      if (error.message.includes('fetch')) {
+        errorMessage += 'Cannot connect to server. Please make sure the backend is running.';
+      } else {
+        errorMessage += error.message;
+      }
+
+      const errorMsg = {
+        role: 'assistant',
+        content: `⚠️ ${errorMessage}`,
+        timestamp: new Date().toISOString(),
+        isError: true
+      };
+      setEngMessages(prev => [...prev, errorMsg]);
+
+      setActivities(prev => [...prev, {
+        type: 'error',
+        agent: 'Technical Specification Agent',
+        message: `Error: ${error.message}`,
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setEngLoading(false);
+    }
   };
 
   /**

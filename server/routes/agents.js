@@ -2,6 +2,7 @@ import express from 'express';
 import { sendMessage, extractTextContent, buildMessage } from '../services/claudeApi.js';
 import { processIntakeMessage } from '../agents/intakeAgent.js';
 import { processInsightsMessage } from '../agents/insightsAgent.js';
+import { processTechSpecMessage, performAutonomousAnalysis } from '../agents/techSpecAgent.js';
 
 const router = express.Router();
 
@@ -121,46 +122,35 @@ router.post('/insights', validateAgentRequest, async (req, res) => {
  */
 router.post('/techspec', validateAgentRequest, async (req, res) => {
   try {
-    const { message, conversationHistory = [] } = req.body;
+    const { message, conversationHistory = [], mode = 'conversational' } = req.body;
 
-    // Build messages array
-    const messages = buildMessagesArray(conversationHistory, message);
+    // Ensure session exists
+    if (!req.session || !req.session.id) {
+      return res.status(401).json({
+        error: 'Session Error',
+        message: 'No session found. Please ensure cookies are enabled.'
+      });
+    }
 
-    // System prompt for Technical Specification Agent
-    const systemPrompt = `You are a Technical Specification Agent for an Engineering Lead.
+    const sessionId = req.session.id;
 
-Your role:
-- Analyze feature requirements and create technical specifications
-- Review codebase architecture and past implementations
-- Provide multiple implementation approaches with trade-offs
-- Estimate complexity and identify risks/dependencies
-- Help refine technical decisions through conversation
+    // Validate mode
+    if (!['conversational', 'autonomous'].includes(mode)) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'Mode must be either "conversational" or "autonomous"'
+      });
+    }
 
-Capabilities:
-- Autonomous technical analysis when triggered by PM
-- Conversational refinement with Engineering Lead
-- Architecture pattern recommendations
-- Complexity estimation
-- Risk and dependency identification
-
-Keep responses technical but accessible, focusing on practical implementation details.`;
-
-    // Send to Claude API
-    const response = await sendMessage({
-      messages,
-      system: systemPrompt,
-      maxTokens: 1024
-    });
-
-    const agentResponse = extractTextContent(response);
+    // Process with tech spec agent
+    const result = await processTechSpecMessage(sessionId, message, conversationHistory, mode);
 
     res.json({
       success: true,
-      response: agentResponse,
-      usage: {
-        inputTokens: response.usage.input_tokens,
-        outputTokens: response.usage.output_tokens
-      }
+      response: result.response,
+      usage: result.usage,
+      mode: result.mode,
+      codebaseContext: result.codebaseContext
     });
 
   } catch (error) {
@@ -168,6 +158,99 @@ Keep responses technical but accessible, focusing on practical implementation de
     res.status(500).json({
       error: 'Agent Error',
       message: error.message || 'Failed to process request with tech spec agent'
+    });
+  }
+});
+
+/**
+ * POST /api/agents/techspec/autonomous
+ * Trigger autonomous technical analysis (typically called by PM/Insights Agent)
+ */
+router.post('/techspec/autonomous', async (req, res) => {
+  try {
+    const { featureRequirements } = req.body;
+
+    if (!featureRequirements) {
+      return res.status(400).json({
+        error: 'Validation Error',
+        message: 'featureRequirements is required'
+      });
+    }
+
+    // Ensure session exists
+    if (!req.session || !req.session.id) {
+      return res.status(401).json({
+        error: 'Session Error',
+        message: 'No session found. Please ensure cookies are enabled.'
+      });
+    }
+
+    const sessionId = req.session.id;
+
+    // Perform autonomous analysis
+    const result = await performAutonomousAnalysis(sessionId, featureRequirements);
+
+    // Store the tech spec in session for later retrieval by Engineering Lead
+    if (!req.session.techSpecs) {
+      req.session.techSpecs = [];
+    }
+    req.session.techSpecs.push({
+      timestamp: result.timestamp,
+      featureRequirements: result.featureRequirements,
+      specification: result.response,
+      usage: result.usage
+    });
+
+    res.json({
+      success: true,
+      response: result.response,
+      usage: result.usage,
+      codebaseContext: result.codebaseContext,
+      timestamp: result.timestamp
+    });
+
+  } catch (error) {
+    console.error('Autonomous tech spec error:', error);
+    res.status(500).json({
+      error: 'Agent Error',
+      message: error.message || 'Failed to perform autonomous technical analysis'
+    });
+  }
+});
+
+/**
+ * GET /api/agents/techspec/list
+ * Get all technical specifications for the current session
+ */
+router.get('/techspec/list', async (req, res) => {
+  try {
+    // Ensure session exists
+    if (!req.session || !req.session.id) {
+      return res.status(401).json({
+        error: 'Session Error',
+        message: 'No session found. Please ensure cookies are enabled.'
+      });
+    }
+
+    const techSpecs = req.session.techSpecs || [];
+
+    res.json({
+      success: true,
+      count: techSpecs.length,
+      techSpecs: techSpecs.map(spec => ({
+        timestamp: spec.timestamp,
+        featureTitle: typeof spec.featureRequirements === 'string'
+          ? spec.featureRequirements.substring(0, 100)
+          : spec.featureRequirements.title || 'Untitled Feature',
+        hasSpecification: !!spec.specification
+      }))
+    });
+
+  } catch (error) {
+    console.error('List tech specs error:', error);
+    res.status(500).json({
+      error: 'Server Error',
+      message: error.message || 'Failed to retrieve technical specifications'
     });
   }
 });
