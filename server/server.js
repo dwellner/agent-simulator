@@ -1,7 +1,9 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import session from 'express-session';
 import agentRoutes from './routes/agents.js';
+import insightsRoutes from './routes/insights.js';
 
 // Load environment variables
 dotenv.config();
@@ -41,8 +43,33 @@ app.use(cors({
 
 app.use(express.json());
 
+// Session middleware - must be configured before routes
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
+    httpOnly: true,
+    maxAge: 2 * 60 * 60 * 1000, // 2 hours
+    sameSite: 'lax'
+  },
+  name: 'workflow.sid' // Custom session cookie name
+}));
+
+// Log session ID for debugging (only in development)
+if (process.env.NODE_ENV !== 'production') {
+  app.use((req, res, next) => {
+    if (req.session && req.session.id) {
+      console.log(`📋 Session: ${req.session.id.substring(0, 8)}... (${req.method} ${req.path})`);
+    }
+    next();
+  });
+}
+
 // Routes
 app.use('/api/agents', agentRoutes);
+app.use('/api/insights', insightsRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {

@@ -45,6 +45,7 @@ function useWorkflowState() {
         headers: {
           'Content-Type': 'application/json',
         },
+        credentials: 'include', // Include cookies for session
         body: JSON.stringify({
           message,
           conversationHistory
@@ -188,7 +189,7 @@ function useWorkflowState() {
   /**
    * Submit current structured request as customer insight to PM
    */
-  const submitInsight = () => {
+  const submitInsight = async () => {
     if (!structuredRequest) {
       console.warn('No structured request to submit as insight');
       return;
@@ -202,20 +203,54 @@ function useWorkflowState() {
       submittedBy: 'CSM'
     };
 
-    setCustomerInsights(prev => [...prev, insight]);
+    try {
+      // POST insight to backend
+      const response = await fetch('http://localhost:3001/api/insights/submit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Important: Include cookies for session
+        body: JSON.stringify({ insight })
+      });
 
-    // Add activity
-    setActivities(prev => [...prev, {
-      type: 'insight',
-      agent: 'Request Intake Agent',
-      message: `Submitted insight: "${structuredRequest.request.title || 'customer request'}" from ${structuredRequest.customer.companyName}`,
-      timestamp: new Date().toISOString()
-    }]);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
 
-    // Reset structured request for next intake
-    setStructuredRequest(null);
+      const data = await response.json();
+      console.log('✓ Insight submitted to backend:', data);
 
-    return insight;
+      // Also keep in client state for immediate UI updates
+      setCustomerInsights(prev => [...prev, insight]);
+
+      // Add activity
+      setActivities(prev => [...prev, {
+        type: 'insight',
+        agent: 'Request Intake Agent',
+        message: `Submitted insight: "${structuredRequest.request.title || 'customer request'}" from ${structuredRequest.customer.companyName}`,
+        timestamp: new Date().toISOString()
+      }]);
+
+      // Reset structured request for next intake
+      setStructuredRequest(null);
+
+      return insight;
+
+    } catch (error) {
+      console.error('Error submitting insight to backend:', error);
+
+      // Add error activity
+      setActivities(prev => [...prev, {
+        type: 'error',
+        agent: 'System',
+        message: `Failed to submit insight: ${error.message}`,
+        timestamp: new Date().toISOString()
+      }]);
+
+      throw error;
+    }
   };
 
   /**

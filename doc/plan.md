@@ -217,17 +217,17 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Note:** Currently insights stored client-side only. Step 5.6 adds backend storage.
 
-### Step 5.6: Backend Insights Repository & Session Management
-- [ ] Create `server/services/insightsService.js` with abstraction layer
-- [ ] Implement session-based insights storage (in-memory Map with session IDs)
-- [ ] Add session middleware (`express-session`) for user isolation
-- [ ] Create POST `/api/insights/submit` endpoint to accept insights from CSM
-- [ ] Create GET `/api/insights` endpoint to retrieve insights for a session
-- [ ] Implement session cleanup for expired sessions (2-hour TTL)
-- [ ] Update frontend `submitInsight()` to POST to backend endpoint
-- [ ] Add session ID handling in frontend (cookies)
+### Step 5.6: Backend Insights Repository & Session Management ✓
+- [x] Create `server/services/insightsService.js` with abstraction layer
+- [x] Implement session-based insights storage (in-memory Map with session IDs)
+- [x] Add session middleware (`express-session`) for user isolation
+- [x] Create POST `/api/insights/submit` endpoint to accept insights from CSM
+- [x] Create GET `/api/insights` endpoint to retrieve insights for a session
+- [x] Implement session cleanup for expired sessions (2-hour TTL)
+- [x] Update frontend `submitInsight()` to POST to backend endpoint
+- [x] Add session ID handling in frontend (cookies)
 
-**Validation:** Multiple browser sessions can submit and retrieve their own isolated insights
+**Validation:** Multiple browser sessions can submit and retrieve their own isolated insights ✓
 
 ---
 
