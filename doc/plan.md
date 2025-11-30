@@ -209,11 +209,25 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 ### Step 5.5: Submit Customer Insights ✓
 - [x] Add "Submit Insight" button to CSM window
 - [x] Enable button only when request is structured and complete
-- [x] Implement action to submit structured request as customer insight
+- [x] Implement action to submit structured request as customer insight (client-side only)
 - [x] Show confirmation message in CSM window
 - [x] Update activity feed with insight submission
 
 **Validation:** CSM can successfully submit customer insights to PM ✓
+
+**Note:** Currently insights stored client-side only. Step 5.6 adds backend storage.
+
+### Step 5.6: Backend Insights Repository & Session Management
+- [ ] Create `server/services/insightsService.js` with abstraction layer
+- [ ] Implement session-based insights storage (in-memory Map with session IDs)
+- [ ] Add session middleware (`express-session`) for user isolation
+- [ ] Create POST `/api/insights/submit` endpoint to accept insights from CSM
+- [ ] Create GET `/api/insights` endpoint to retrieve insights for a session
+- [ ] Implement session cleanup for expired sessions (2-hour TTL)
+- [ ] Update frontend `submitInsight()` to POST to backend endpoint
+- [ ] Add session ID handling in frontend (cookies)
+
+**Validation:** Multiple browser sessions can submit and retrieve their own isolated insights
 
 ---
 
@@ -228,45 +242,38 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Test prompt with sample queries, verify synthesis behavior
 
-### Step 6.2: Insights Repository Management
-- [ ] Create `server/services/insightsService.js` with abstraction layer
-- [ ] Implement session-based insights storage (in-memory Map)
-- [ ] Add session middleware for user isolation
-- [ ] Accept submitted insights from CSM
-- [ ] Provide insights context to agent
+### Step 6.2: Insights Agent Integration with Repository
+- [ ] Integrate insightsService into insights agent
+- [ ] Pass session ID to retrieve correct insights
+- [ ] Format insights data for agent context
 - [ ] Implement insight query functions (filter, group, aggregate)
-- [ ] Add session cleanup for expired sessions (2-hour TTL)
-
-**Validation:** Repository correctly stores and retrieves insights per session
-
-### Step 6.3: Insights Agent Query Capabilities
-- [ ] Implement pattern matching across insights
+- [ ] Add pattern matching across insights
 - [ ] Add aggregation functions (total ARR, customer count)
 - [ ] Implement grouping by criteria (urgency, category, customer tier)
-- [ ] Add theme/pattern identification across insights
 
-**Validation:** Agent responds accurately to various analytical queries
+**Validation:** Agent has access to session's insights and can analyze them
 
-### Step 6.4: PM Conversation UI Integration
-- [ ] Connect PM RoleWindow to insights agent endpoint
-- [ ] Implement message sending from UI
+### Step 6.3: PM Conversation UI Integration
+- [ ] Update PM handler to call `/api/agents/insights` endpoint (already exists)
+- [ ] Ensure session ID is passed with requests
 - [ ] Display agent responses with formatted data
-- [ ] Add loading state during API calls
+- [ ] Add loading state during API calls (already implemented)
+- [ ] Test full PM workflow with real insights data
 
-**Validation:** PM can query insights successfully
+**Validation:** PM can query insights successfully and get relevant analysis
 
-### Step 6.5: Tech Agent Triggering
+### Step 6.4: Tech Agent Triggering
 - [ ] Detect when PM requests technical feasibility
 - [ ] Implement trigger for Technical Specification Agent
 - [ ] Update activity feed with tech agent status
-- [ ] Store technical analysis request
+- [ ] Store technical analysis request in session
 
 **Validation:** Insights agent recognizes feasibility request and triggers tech agent
 
-### Step 6.6: Share Technical Spec with Engineering
+### Step 6.5: Share Technical Spec with Engineering
 - [ ] Add "Share with Engineering" button to PM window
 - [ ] Enable button after technical analysis is complete
-- [ ] Make technical spec available to Engineering Lead
+- [ ] Store technical spec in session (accessible by Engineering Lead)
 - [ ] Show spec summary in Engineering window
 - [ ] Update activity feed with sharing action
 
@@ -286,13 +293,14 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 **Validation:** Test prompt with sample feature, verify technical depth
 
 ### Step 7.2: Autonomous Analysis Mode
-- [ ] Implement automatic trigger from Queue Agent
-- [ ] Provide feature requirements to Tech Agent
+- [ ] Implement automatic trigger from Insights Agent
+- [ ] Retrieve feature requirements from session
 - [ ] Provide mock codebase context
 - [ ] Generate initial technical specification
+- [ ] Store tech spec in session
 - [ ] Stream analysis progress to activity feed
 
-**Validation:** Tech agent generates complete specification autonomously
+**Validation:** Tech agent generates complete specification autonomously and stores in session
 
 ### Step 7.3: Technical Analysis Output
 - [ ] Define technical specification format
@@ -300,39 +308,46 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 - [ ] Add complexity estimates
 - [ ] Identify risks and dependencies
 - [ ] Format for Engineering Lead review
+- [ ] Ensure spec is retrievable from session
 
-**Validation:** Specification includes all required sections
+**Validation:** Specification includes all required sections and is stored in session
 
 ### Step 7.4: Conversational Refinement Mode
 - [ ] Implement refinement conversation endpoint
+- [ ] Retrieve existing tech spec from session
 - [ ] Allow Engineering Lead to ask questions
 - [ ] Update recommendations based on feedback
+- [ ] Update stored spec in session
 - [ ] Maintain context from autonomous analysis
 
-**Validation:** Engineering Lead can refine specification through conversation
+**Validation:** Engineering Lead can refine specification and changes persist in session
 
 ### Step 7.5: Engineering Conversation UI Integration
-- [ ] Connect Engineering RoleWindow to tech spec agent endpoint
-- [ ] Display initial specification automatically
+- [ ] Update Engineering handler to call tech spec endpoint
+- [ ] Ensure session ID is passed with requests
+- [ ] Display initial specification automatically when available
 - [ ] Enable conversation for refinement
-- [ ] Add loading state during API calls
+- [ ] Add loading state during API calls (already implemented)
 
-**Validation:** Engineering Lead can review and refine specification
+**Validation:** Engineering Lead can review and refine specification with session persistence
 
 ---
 
 ## Phase 8: Agent-to-Agent Communication
 
-### Step 8.1: Queue Agent to Tech Agent Coordination
-- [ ] Implement context package creation (Queue → Tech)
+### Step 8.1: Insights Agent to Tech Agent Coordination
+- [ ] Implement context package creation (Insights Agent → Tech Agent)
+- [ ] Retrieve relevant insights from session for tech analysis
 - [ ] Include feature requirements, business context, customer data
+- [ ] Store analysis request in session
 - [ ] Pass to Tech Agent as system message
-- [ ] Return Tech Agent response to Queue Agent
+- [ ] Return Tech Agent response to Insights Agent
+- [ ] Store response in session for Engineering Lead access
 
-**Validation:** Queue Agent successfully coordinates with Tech Agent
+**Validation:** Insights Agent successfully coordinates with Tech Agent via session data
 
 ### Step 8.2: Activity Feed Integration
-- [ ] Update activity feed when Queue Agent triggers Tech Agent
+- [ ] Update activity feed when Insights Agent triggers Tech Agent
 - [ ] Stream Tech Agent progress to activity feed
 - [ ] Show completion status
 - [ ] Display in real-time regardless of active window
