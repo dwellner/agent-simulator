@@ -115,38 +115,90 @@ function useWorkflowState() {
   /**
    * Handle PM (Product Manager) messages
    */
-  const handlePmMessage = (message) => {
+  const handlePmMessage = async (message) => {
     const newMessage = {
       role: 'user',
       content: message,
       timestamp: new Date().toISOString()
     };
     setPmMessages(prev => [...prev, newMessage]);
+    setPmLoading(true);
 
     // Add agent activity
     setActivities(prev => [...prev, {
       type: 'analysis',
-      agent: 'Product Queue Agent',
-      message: 'Analyzing queue and synthesizing across requests...',
+      agent: 'Customer Insights Agent',
+      message: 'Analyzing customer insights and identifying patterns...',
       timestamp: new Date().toISOString()
     }]);
 
-    // Simulate agent response
-    setTimeout(() => {
+    try {
+      // Call the insights agent API
+      const conversationHistory = pmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
+
+      const response = await fetch('http://localhost:3001/api/agents/insights', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for session
+        body: JSON.stringify({
+          message,
+          conversationHistory
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `Server error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      // Add agent response to messages
       const agentMessage = {
-        role: 'agent',
-        content: 'This is a demo response from the Product Queue Agent. In the full implementation, this will connect to the Claude API.',
+        role: 'assistant',
+        content: data.response,
         timestamp: new Date().toISOString()
       };
       setPmMessages(prev => [...prev, agentMessage]);
 
+      // Add completion activity
       setActivities(prev => [...prev, {
         type: 'complete',
-        agent: 'Product Queue Agent',
-        message: 'Queue analysis complete',
+        agent: 'Customer Insights Agent',
+        message: `Analysis complete (${data.insightsContext?.totalInsights || 0} insights analyzed)`,
         timestamp: new Date().toISOString()
       }]);
-    }, 1000);
+
+    } catch (error) {
+      console.error('Error calling insights agent:', error);
+
+      // Provide user-friendly error message
+      let errorMessage = 'Failed to analyze insights. ';
+      if (error.message.includes('fetch')) {
+        errorMessage += 'Cannot connect to server. Please make sure the backend is running.';
+      } else {
+        errorMessage += error.message;
+      }
+
+      const errorMsg = {
+        role: 'assistant',
+        content: `⚠️ ${errorMessage}`,
+        timestamp: new Date().toISOString(),
+        isError: true
+      };
+      setPmMessages(prev => [...prev, errorMsg]);
+
+      setActivities(prev => [...prev, {
+        type: 'error',
+        agent: 'Customer Insights Agent',
+        message: `Error: ${error.message}`,
+        timestamp: new Date().toISOString()
+      }]);
+    } finally {
+      setPmLoading(false);
+    }
   };
 
   /**

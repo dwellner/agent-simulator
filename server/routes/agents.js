@@ -1,6 +1,7 @@
 import express from 'express';
 import { sendMessage, extractTextContent, buildMessage } from '../services/claudeApi.js';
 import { processIntakeMessage } from '../agents/intakeAgent.js';
+import { processInsightsMessage } from '../agents/insightsAgent.js';
 
 const router = express.Router();
 
@@ -85,44 +86,24 @@ router.post('/insights', validateAgentRequest, async (req, res) => {
   try {
     const { message, conversationHistory = [] } = req.body;
 
-    // Build messages array
-    const messages = buildMessagesArray(conversationHistory, message);
+    // Ensure session exists
+    if (!req.session || !req.session.id) {
+      return res.status(401).json({
+        error: 'Session Error',
+        message: 'No session found. Please ensure cookies are enabled.'
+      });
+    }
 
-    // System prompt for Customer Insights Agent
-    const systemPrompt = `You are a Customer Insights Agent for a Product Manager.
+    const sessionId = req.session.id;
 
-Your role:
-- Help PMs explore and analyze customer insights through conversation
-- Identify patterns and themes across customer requests
-- Provide strategic insights on urgency, customer impact, and ARR implications
-- Answer analytical questions about the insights repository
-- Coordinate with the Technical Specification Agent when needed
-
-Capabilities:
-- Pattern matching and synthesis across insights
-- Aggregating ARR and customer counts
-- Grouping by urgency, category, or customer tier
-- Identifying themes and trends in customer needs
-- Answering conversational queries (e.g., "What do Enterprise customers want?")
-
-Keep responses analytical, conversational, and data-driven. You're not processing a queue mechanically - you're helping the PM understand customer needs through exploration and analysis.`;
-
-    // Send to Claude API
-    const response = await sendMessage({
-      messages,
-      system: systemPrompt,
-      maxTokens: 1024
-    });
-
-    const agentResponse = extractTextContent(response);
+    // Process with insights agent
+    const result = await processInsightsMessage(sessionId, message, conversationHistory);
 
     res.json({
       success: true,
-      response: agentResponse,
-      usage: {
-        inputTokens: response.usage.input_tokens,
-        outputTokens: response.usage.output_tokens
-      }
+      response: result.response,
+      usage: result.usage,
+      insightsContext: result.insightsContext
     });
 
   } catch (error) {

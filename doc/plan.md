@@ -233,34 +233,36 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ## Phase 6: Customer Insights Agent (PM Stage)
 
-### Step 6.1: Insights Agent Prompt Engineering
-- [ ] Create `server/agents/insightsAgent.js`
-- [ ] Write system prompt for Customer Insights Agent
-- [ ] Define analytical and synthesis personality
-- [ ] Specify conversational query capabilities
-- [ ] Add insights repository access instructions
+### Step 6.1: Insights Agent Prompt Engineering ✓
+- [x] Create `server/agents/insightsAgent.js`
+- [x] Write system prompt for Customer Insights Agent
+- [x] Define analytical and synthesis personality
+- [x] Specify conversational query capabilities
+- [x] Add insights repository access instructions
 
-**Validation:** Test prompt with sample queries, verify synthesis behavior
+**Validation:** Test prompt with sample queries, verify synthesis behavior ✓
 
-### Step 6.2: Insights Agent Integration with Repository
-- [ ] Integrate insightsService into insights agent
-- [ ] Pass session ID to retrieve correct insights
-- [ ] Format insights data for agent context
-- [ ] Implement insight query functions (filter, group, aggregate)
-- [ ] Add pattern matching across insights
-- [ ] Add aggregation functions (total ARR, customer count)
-- [ ] Implement grouping by criteria (urgency, category, customer tier)
+**Note:** Steps 6.2 and 6.3 were completed together with 6.1 as they're tightly coupled.
 
-**Validation:** Agent has access to session's insights and can analyze them
+### Step 6.2: Insights Agent Integration with Repository ✓
+- [x] Integrate insightsService into insights agent
+- [x] Pass session ID to retrieve correct insights
+- [x] Format insights data for agent context
+- [x] Implement insight query functions (filter, group, aggregate)
+- [x] Add pattern matching across insights
+- [x] Add aggregation functions (total ARR, customer count)
+- [x] Implement grouping by criteria (urgency, category, customer tier)
 
-### Step 6.3: PM Conversation UI Integration
-- [ ] Update PM handler to call `/api/agents/insights` endpoint (already exists)
-- [ ] Ensure session ID is passed with requests
-- [ ] Display agent responses with formatted data
-- [ ] Add loading state during API calls (already implemented)
-- [ ] Test full PM workflow with real insights data
+**Validation:** Agent has access to session's insights and can analyze them ✓
 
-**Validation:** PM can query insights successfully and get relevant analysis
+### Step 6.3: PM Conversation UI Integration ✓
+- [x] Update PM handler to call `/api/agents/insights` endpoint
+- [x] Ensure session ID is passed with requests
+- [x] Display agent responses with formatted data
+- [x] Add loading state during API calls
+- [x] Test full PM workflow with real insights data
+
+**Validation:** PM can query insights successfully and get relevant analysis ✓
 
 ### Step 6.4: Tech Agent Triggering
 - [ ] Detect when PM requests technical feasibility
