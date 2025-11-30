@@ -264,26 +264,11 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** PM can query insights successfully and get relevant analysis ✓
 
-### Step 6.4: Tech Agent Triggering
-- [ ] Detect when PM requests technical feasibility
-- [ ] Implement trigger for Technical Specification Agent
-- [ ] Update activity feed with tech agent status
-- [ ] Store technical analysis request in session
-
-**Validation:** Insights agent recognizes feasibility request and triggers tech agent
-
-### Step 6.5: Share Technical Spec with Engineering
-- [ ] Add "Share with Engineering" button to PM window
-- [ ] Enable button after technical analysis is complete
-- [ ] Store technical spec in session (accessible by Engineering Lead)
-- [ ] Show spec summary in Engineering window
-- [ ] Update activity feed with sharing action
-
-**Validation:** PM can successfully share technical specifications with Engineering
-
 ---
 
 ## Phase 7: Technical Specification Agent (Engineering Stage)
+
+**Note:** Phase 7 moved here (before old 6.4-6.5) because we need to build the Tech Agent before we can implement triggering/coordination.
 
 ### Step 7.1: Tech Spec Agent Prompt Engineering
 - [ ] Create `server/agents/techSpecAgent.js`
@@ -335,9 +320,30 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 8: Agent-to-Agent Communication
+## Phase 8: PM-to-Engineering Workflow Integration
 
-### Step 8.1: Insights Agent to Tech Agent Coordination
+### Step 8.1: Tech Agent Triggering from PM
+- [ ] Detect when PM requests technical feasibility
+- [ ] Implement trigger for Technical Specification Agent
+- [ ] Update activity feed with tech agent status
+- [ ] Store technical analysis request in session
+
+**Validation:** Insights agent recognizes feasibility request and triggers tech agent
+
+### Step 8.2: Share Technical Spec with Engineering
+- [ ] Add "Share with Engineering" button to PM window
+- [ ] Enable button after technical analysis is complete
+- [ ] Store technical spec in session (accessible by Engineering Lead)
+- [ ] Show spec summary in Engineering window
+- [ ] Update activity feed with sharing action
+
+**Validation:** PM can successfully share technical specifications with Engineering
+
+---
+
+## Phase 9: Agent-to-Agent Communication
+
+### Step 9.1: Insights Agent to Tech Agent Coordination
 - [ ] Implement context package creation (Insights Agent → Tech Agent)
 - [ ] Retrieve relevant insights from session for tech analysis
 - [ ] Include feature requirements, business context, customer data
@@ -348,7 +354,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Insights Agent successfully coordinates with Tech Agent via session data
 
-### Step 8.2: Activity Feed Integration
+### Step 9.2: Activity Feed Integration
 - [ ] Update activity feed when Insights Agent triggers Tech Agent
 - [ ] Stream Tech Agent progress to activity feed
 - [ ] Show completion status
@@ -358,23 +364,23 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 9: Real-time Updates
+## Phase 10: Real-time Updates
 
-### Step 9.1: Server-Sent Events Setup
+### Step 10.1: Server-Sent Events Setup
 - [ ] Add SSE endpoint to Express server
 - [ ] Implement event emitter for agent activities
 - [ ] Configure SSE headers and keep-alive
 
 **Validation:** SSE connection established from client
 
-### Step 9.2: Streaming Agent Responses
+### Step 10.2: Streaming Agent Responses
 - [ ] Stream Claude API responses to client
 - [ ] Update activity feed in real-time
 - [ ] Handle connection errors and reconnection
 
 **Validation:** Agent responses stream smoothly to UI
 
-### Step 9.3: Activity Feed Real-time Updates
+### Step 10.3: Activity Feed Real-time Updates
 - [ ] Connect activity feed to SSE stream
 - [ ] Display agent work as it happens
 - [ ] Auto-scroll to latest activity
@@ -384,9 +390,9 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 10: Demo Flow Polish
+## Phase 11: Demo Flow Polish
 
-### Step 10.1: Timing and Pacing
+### Step 13.1: Timing and Pacing
 - [ ] Add elapsed time counter (starts at demo begin)
 - [ ] Update timeline progress indicators
 - [ ] Add smooth animations for message appearance
@@ -394,7 +400,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Demo flow feels smooth and professional
 
-### Step 10.2: Reset Functionality
+### Step 13.2: Reset Functionality
 - [ ] Implement reset button functionality
 - [ ] Clear all conversation history for all roles
 - [ ] Clear PM queue and Engineering specs
@@ -403,7 +409,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Reset button clears all state and restarts demo
 
-### Step 10.3: Error Handling
+### Step 13.3: Error Handling
 - [ ] Add user-friendly error messages
 - [ ] Implement retry logic for failed API calls
 - [ ] Show errors in activity feed
@@ -411,7 +417,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Errors handled gracefully without breaking UI
 
-### Step 10.4: Visual Polish
+### Step 13.4: Visual Polish
 - [ ] Improve chat bubble styling
 - [ ] Add smooth scroll animations
 - [ ] Enhance active/inactive role indicators
@@ -422,9 +428,9 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 11: Testing and Validation
+## Phase 12: Testing and Validation
 
-### Step 11.1: Unit Tests
+### Step 13.1: Unit Tests
 - [ ] Test mock data structure and exports
 - [ ] Test workflow state hook functions
 - [ ] Test agent prompt construction
@@ -432,7 +438,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** All unit tests pass
 
-### Step 11.2: Integration Tests
+### Step 13.2: Integration Tests
 - [ ] Test full CSM conversation flow
 - [ ] Test full PM query flow
 - [ ] Test full Engineering refinement flow
@@ -441,7 +447,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** All integration tests pass
 
-### Step 11.3: End-to-End Demo Test
+### Step 13.3: End-to-End Demo Test
 - [ ] Run complete demo from CSM to Engineering
 - [ ] Verify all data flows correctly
 - [ ] Verify all agents respond appropriately
@@ -450,7 +456,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Complete demo runs successfully
 
-### Step 11.4: Edge Case Testing
+### Step 13.4: Edge Case Testing
 - [ ] Test with various input types
 - [ ] Test with empty inputs
 - [ ] Test with very long messages
@@ -461,9 +467,9 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 12: Deployment Preparation
+## Phase 13: Deployment Preparation
 
-### Step 12.1: Environment Configuration
+### Step 13.1: Environment Configuration
 - [ ] Create production environment configuration
 - [ ] Add environment variable validation
 - [ ] Configure API key security
@@ -471,7 +477,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Production config works correctly
 
-### Step 12.2: Build Optimization
+### Step 13.2: Build Optimization
 - [ ] Optimize React build for production
 - [ ] Minify and bundle assets
 - [ ] Configure server for production mode
@@ -479,7 +485,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Production build runs successfully
 
-### Step 12.3: Documentation
+### Step 13.3: Documentation
 - [ ] Create README.md with setup instructions
 - [ ] Document environment variables
 - [ ] Add API key setup guide
@@ -488,7 +494,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** New developer can set up project following README
 
-### Step 12.4: Fly.io Account Setup (Manual)
+### Step 13.4: Fly.io Account Setup (Manual)
 **User Action Required:**
 - [ ] Visit https://fly.io/app/sign-up
 - [ ] Sign up with GitHub, Google, or Email
@@ -500,7 +506,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Fly CLI installed and authenticated
 
-### Step 12.5: Fly.io Deployment Configuration
+### Step 13.5: Fly.io Deployment Configuration
 - [ ] Run `fly launch` to create fly.toml configuration
 - [ ] Configure build settings for Node.js + Vite
 - [ ] Set environment variables: `fly secrets set CLAUDE_API_KEY=...`
@@ -510,7 +516,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** fly.toml created and configured correctly
 
-### Step 12.6: Deploy to Fly.io
+### Step 13.6: Deploy to Fly.io
 - [ ] Build production assets locally to verify
 - [ ] Deploy: `fly deploy`
 - [ ] Monitor deployment logs
@@ -521,7 +527,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Application runs successfully on Fly.io
 
-### Step 12.7: Post-Deployment Setup
+### Step 13.7: Post-Deployment Setup
 - [ ] Set up Fly.io monitoring (included in free tier)
 - [ ] Configure auto-scaling limits (min: 1, max: 1 for free tier)
 - [ ] Add deployment documentation to README
@@ -532,27 +538,27 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 13: Future Enhancements (Post-V1)
+## Phase 14: Future Enhancements (Post-V1)
 
-### Step 13.1: Additional Scenarios
+### Step 14.1: Additional Scenarios
 - [ ] Design customer support triage scenario
 - [ ] Design sales qualification scenario
 - [ ] Implement scenario selection UI
 - [ ] Add scenario-specific mock data
 
-### Step 13.2: Comparison Mode
+### Step 14.2: Comparison Mode
 - [ ] Implement traditional workflow timing
 - [ ] Show side-by-side comparison
 - [ ] Calculate time/meeting savings
 - [ ] Add visual comparison dashboard
 
-### Step 13.3: Customizable Mock Data
+### Step 14.3: Customizable Mock Data
 - [ ] Create UI for uploading custom customer data
 - [ ] Create UI for uploading custom request data
 - [ ] Validate uploaded data
 - [ ] Use custom data in demo
 
-### Step 13.4: Demo Recording/Playback
+### Step 14.4: Demo Recording/Playback
 - [ ] Implement demo state recording
 - [ ] Save demo sessions to file
 - [ ] Create playback mode
