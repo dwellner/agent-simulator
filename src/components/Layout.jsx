@@ -7,6 +7,7 @@ import './Layout.css';
 
 function Layout() {
   const [justAddedToQueue, setJustAddedToQueue] = useState(false);
+  const [justSharedSpec, setJustSharedSpec] = useState(false);
   const {
     startTime,
     csmMessages,
@@ -18,10 +19,13 @@ function Layout() {
     csmLoading,
     pmLoading,
     engLoading,
+    availableTechSpec,
+    sharedTechSpecs,
     handleCsmMessage,
     handlePmMessage,
     handleEngMessage,
     submitInsight,
+    shareTechSpec,
     resetWorkflow
   } = useWorkflowState();
 
@@ -44,6 +48,28 @@ function Layout() {
       title={!canSubmitInsight ? 'Complete the request details first' : 'Submit this customer insight to PM'}
     >
       {justAddedToQueue ? '✓ Insight Submitted!' : 'Submit Insight'}
+    </button>
+  );
+
+  // Handle sharing tech spec with Engineering
+  const handleShareTechSpec = () => {
+    shareTechSpec();
+    setJustSharedSpec(true);
+    setTimeout(() => setJustSharedSpec(false), 2000);
+  };
+
+  // Check if we can share tech spec (tech analysis completed)
+  const canShareTechSpec = availableTechSpec !== null;
+
+  // Create the Share with Engineering button for PM window
+  const shareTechSpecButton = (
+    <button
+      onClick={handleShareTechSpec}
+      disabled={!canShareTechSpec || justSharedSpec}
+      className={`action-button ${justSharedSpec ? 'success' : ''}`}
+      title={!canShareTechSpec ? 'Request technical feasibility analysis first' : 'Share this technical specification with Engineering'}
+    >
+      {justSharedSpec ? '✓ Shared with Engineering!' : 'Share with Engineering'}
     </button>
   );
 
@@ -72,6 +98,7 @@ function Layout() {
             messages={pmMessages}
             onSendMessage={handlePmMessage}
             isLoading={pmLoading}
+            actionButton={shareTechSpecButton}
           />
 
           <RoleWindow

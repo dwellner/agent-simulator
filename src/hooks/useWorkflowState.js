@@ -15,6 +15,8 @@ function useWorkflowState() {
   const [pmLoading, setPmLoading] = useState(false);
   const [engLoading, setEngLoading] = useState(false);
   const [customerInsights, setCustomerInsights] = useState([]);
+  const [availableTechSpec, setAvailableTechSpec] = useState(null);
+  const [sharedTechSpecs, setSharedTechSpecs] = useState([]);
 
   /**
    * Handle CSM (Customer Success Manager) messages
@@ -175,6 +177,12 @@ function useWorkflowState() {
       if (data.techAnalysisTriggered && data.techAnalysisResult) {
         console.log('🎯 Tech analysis triggered:', data.techAnalysisResult);
 
+        // Store the available tech spec for sharing
+        setAvailableTechSpec({
+          featureTitle: data.techAnalysisResult.featureTitle,
+          timestamp: data.techAnalysisResult.timestamp
+        });
+
         // Add activity showing technical analysis was initiated
         setActivities(prev => [...prev, {
           type: 'working',
@@ -315,6 +323,45 @@ function useWorkflowState() {
   };
 
   /**
+   * Share technical specification with Engineering Lead
+   */
+  const shareTechSpec = () => {
+    if (!availableTechSpec) {
+      console.warn('No tech spec available to share');
+      return;
+    }
+
+    // Add to shared specs list
+    const sharedSpec = {
+      ...availableTechSpec,
+      sharedAt: new Date().toISOString()
+    };
+    setSharedTechSpecs(prev => [...prev, sharedSpec]);
+
+    // Add system message to Engineering window
+    const systemMessage = {
+      role: 'system',
+      content: `📋 New Technical Specification Shared\n\nFeature: ${availableTechSpec.featureTitle}\nAnalysis completed at: ${new Date(availableTechSpec.timestamp).toLocaleString()}\n\nThe Product Manager has shared a technical specification for review. You can ask the Technical Specification Agent about implementation details, risks, and next steps.`,
+      timestamp: new Date().toISOString(),
+      isSystemMessage: true
+    };
+    setEngMessages(prev => [...prev, systemMessage]);
+
+    // Add activity
+    setActivities(prev => [...prev, {
+      type: 'handoff',
+      agent: 'Customer Insights Agent',
+      message: `Shared technical specification with Engineering: "${availableTechSpec.featureTitle}"`,
+      timestamp: new Date().toISOString()
+    }]);
+
+    // Clear available spec
+    setAvailableTechSpec(null);
+
+    console.log('✓ Tech spec shared with Engineering:', sharedSpec);
+  };
+
+  /**
    * Submit current structured request as customer insight to PM
    */
   const submitInsight = async () => {
@@ -391,6 +438,8 @@ function useWorkflowState() {
     setActivities([]);
     setStructuredRequest(null);
     setCustomerInsights([]);
+    setAvailableTechSpec(null);
+    setSharedTechSpecs([]);
     setCsmLoading(false);
     setPmLoading(false);
     setEngLoading(false);
@@ -409,6 +458,8 @@ function useWorkflowState() {
     csmLoading,
     pmLoading,
     engLoading,
+    availableTechSpec,
+    sharedTechSpecs,
 
     // Handlers
     handleCsmMessage,
@@ -417,6 +468,7 @@ function useWorkflowState() {
 
     // Actions
     submitInsight,
+    shareTechSpec,
     resetWorkflow
   };
 }

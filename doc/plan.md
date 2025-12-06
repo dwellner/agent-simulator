@@ -326,14 +326,24 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 - Tech specs stored in session automatically for Engineering Lead access
 - Fixed API endpoint to return `techAnalysisTriggered` and `techAnalysisResult` to frontend
 
-### Step 8.2: Share Technical Spec with Engineering
-- [ ] Add "Share with Engineering" button to PM window
-- [ ] Enable button after technical analysis is complete
-- [ ] Store technical spec in session (accessible by Engineering Lead)
-- [ ] Show spec summary in Engineering window
-- [ ] Update activity feed with sharing action
+### Step 8.2: Share Technical Spec with Engineering ✅
+- [x] Add "Share with Engineering" button to PM window
+- [x] Enable button after technical analysis is complete
+- [x] Store technical spec in session (accessible by Engineering Lead)
+- [x] Show spec summary in Engineering window
+- [x] Update activity feed with sharing action
 
-**Validation:** PM can successfully share technical specifications with Engineering
+**Implementation Notes:**
+- Added `availableTechSpec` and `sharedTechSpecs` state to `useWorkflowState.js`
+- Created `shareTechSpec()` handler that creates system message in Engineering window
+- System messages styled with blue theme, centered, and distinct from agent messages
+- Button enabled only when `availableTechSpec !== null` (after tech analysis completes)
+- System message includes feature title, timestamp, and context for Engineering Lead
+- Activity feed shows "Shared technical specification with Engineering: [Feature]"
+- Improved Insights Agent prompt to provide substantial response BEFORE trigger marker
+- PM now sees clear summary of requirements being analyzed, business context, and confirmation
+
+**Validation:** PM can successfully share technical specifications with Engineering ✅
 
 ---
 

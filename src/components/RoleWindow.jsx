@@ -47,11 +47,11 @@ function RoleWindow({
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`message ${message.role === 'user' ? 'user-message' : 'agent-message'} ${message.isError ? 'error-message' : ''}`}
+                className={`message ${message.role === 'user' ? 'user-message' : message.role === 'system' ? 'system-message' : 'agent-message'} ${message.isError ? 'error-message' : ''}`}
               >
                 <div className="message-header">
                   <span className="message-sender">
-                    {message.role === 'user' ? title : 'AI Agent'}
+                    {message.role === 'user' ? title : message.role === 'system' ? 'System' : 'AI Agent'}
                   </span>
                   {message.timestamp && (
                     <span className="message-timestamp">
