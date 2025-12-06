@@ -92,6 +92,106 @@ This document outlines the agreed-upon development workflow for the AI-Enhanced 
 
 ---
 
+## Documentation Maintenance
+
+### Living Documentation Requirements
+
+The following documents must be kept up to date as the project evolves:
+
+#### 1. **README.md** (GitHub Landing Page)
+**Update when:**
+- New major features are completed (e.g., completing a phase)
+- Architecture changes
+- Setup/installation instructions change
+- New documentation is added to `doc/`
+- Project status changes (phases completed)
+
+**What to update:**
+- Features list
+- Project status section
+- Architecture diagram (if structure changes)
+- Quick start instructions (if setup changes)
+- Documentation links and summaries
+
+#### 2. **doc/technical-design.md** (Technical Reference)
+**Update when:**
+- New agents are added or agent behavior changes significantly
+- New communication flows are implemented
+- Data models change (schemas, session structure)
+- Architecture patterns change
+- New endpoints are added or existing ones modified
+- Security or performance considerations change
+
+**What to update:**
+- Architecture diagrams (add/update Mermaid diagrams)
+- Agent descriptions and processing flows
+- Communication flow diagrams
+- Data model schemas
+- Implementation details sections
+- File structure (if organization changes)
+
+#### 3. **doc/plan.md** (Always Updated)
+**Update when:**
+- Starting any new work
+- Completing any step
+- Adding implementation notes after completion
+
+**What to update:**
+- Checkboxes for completed work
+- Implementation notes for each completed step
+- Validation confirmations
+
+### Documentation Update Process
+
+**During Development:**
+1. As you implement features, note documentation updates needed
+2. Add TODO comments if documentation updates are deferred
+
+**After Step Completion:**
+1. Update `doc/plan.md` immediately (mark step complete, add notes)
+2. Assess if README.md or technical-design.md need updates
+3. If documentation updates are needed, do them in the same commit or immediately after
+
+**When to Update in Same Commit:**
+- Small clarifications or additions
+- Completion notes in plan.md
+- Minor feature additions to README
+
+**When to Update in Separate Commit:**
+- Large architecture diagram additions
+- Significant new sections
+- Major rewrites or reorganizations
+
+### Documentation Quality Standards
+
+**README.md:**
+- Keep it concise and scannable
+- Use clear section headers
+- Provide working examples in Quick Start
+- Ensure all doc/ links work and have accurate summaries
+
+**technical-design.md:**
+- Keep diagrams synchronized with code
+- Update sequence diagrams when flows change
+- Ensure data model examples match actual schemas
+- Keep file structure accurate
+
+**plan.md:**
+- Always accurate reflection of progress
+- Implementation notes capture key decisions
+- Validation criteria updated with actual results
+
+### Quick Documentation Check
+
+Before committing major features, verify:
+- [ ] plan.md updated with completion status
+- [ ] README.md reflects new capabilities (if significant)
+- [ ] technical-design.md diagrams match implementation (if architecture changed)
+- [ ] All documentation links still work
+- [ ] Quick Start instructions still accurate
+
+---
+
 ## Quick Reference
 
 **Where is the plan?** → `doc/plan.md`
