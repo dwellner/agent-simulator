@@ -171,6 +171,29 @@ function useWorkflowState() {
         timestamp: new Date().toISOString()
       }]);
 
+      // Check if technical analysis was triggered
+      if (data.techAnalysisTriggered && data.techAnalysisResult) {
+        console.log('🎯 Tech analysis triggered:', data.techAnalysisResult);
+
+        // Add activity showing technical analysis was initiated
+        setActivities(prev => [...prev, {
+          type: 'working',
+          agent: 'Technical Specification Agent',
+          message: `Autonomous analysis initiated for: ${data.techAnalysisResult.featureTitle}`,
+          timestamp: new Date().toISOString()
+        }]);
+
+        // Add activity showing technical analysis completion
+        setTimeout(() => {
+          setActivities(prev => [...prev, {
+            type: 'complete',
+            agent: 'Technical Specification Agent',
+            message: `Technical specification complete for: ${data.techAnalysisResult.featureTitle}`,
+            timestamp: new Date().toISOString()
+          }]);
+        }, 500);
+      }
+
     } catch (error) {
       console.error('Error calling insights agent:', error);
 

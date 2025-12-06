@@ -309,13 +309,22 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ## Phase 8: PM-to-Engineering Workflow Integration
 
-### Step 8.1: Tech Agent Triggering from PM
-- [ ] Detect when PM requests technical feasibility
-- [ ] Implement trigger for Technical Specification Agent
-- [ ] Update activity feed with tech agent status
-- [ ] Store technical analysis request in session
+### Step 8.1: Tech Agent Triggering from PM ✓
+- [x] Detect when PM requests technical feasibility
+- [x] Implement trigger for Technical Specification Agent
+- [x] Update activity feed with tech agent status
+- [x] Store technical analysis request in session
 
-**Validation:** Insights agent recognizes feasibility request and triggers tech agent
+**Validation:** Insights agent recognizes feasibility request and triggers tech agent ✓
+
+**Implementation Notes:**
+- Enhanced Insights Agent prompt to automatically trigger tech analysis when PM asks about feasibility
+- Implemented [TRIGGER_TECH_ANALYSIS] marker with JSON feature requirements format
+- Created brace-matching parser for nested JSON objects in agent responses
+- Tech Spec Agent performs autonomous analysis via `performAutonomousAnalysis`
+- Activity feed shows "Autonomous analysis initiated" and "Technical specification complete"
+- Tech specs stored in session automatically for Engineering Lead access
+- Fixed API endpoint to return `techAnalysisTriggered` and `techAnalysisResult` to frontend
 
 ### Step 8.2: Share Technical Spec with Engineering
 - [ ] Add "Share with Engineering" button to PM window

@@ -1,5 +1,6 @@
 import { sendMessage, buildMessage, extractTextContent } from '../services/claudeApi.js';
 import { getInsights, getInsightsStats } from '../services/insightsService.js';
+import { performAutonomousAnalysis } from './techSpecAgent.js';
 
 /**
  * Customer Insights Agent
@@ -107,12 +108,58 @@ Example: "I don't see any insights matching that query yet. Once CSMs submit cus
 
 ### When Asked About Technical Feasibility
 
-If the PM asks about technical feasibility or wants to move forward with a feature:
-- Acknowledge the question
-- Offer to coordinate with the Technical Specification Agent
-- Summarize the requirements that would be passed to the tech team
+**IMPORTANT:** When the PM asks about technical feasibility, implementation approaches, or wants to move forward with analyzing a feature, you MUST automatically initiate technical analysis.
 
-Example: "Based on these 8 export-related insights, I can work with the Technical Specification Agent to analyze implementation approaches. Should I initiate a technical feasibility analysis?"
+Steps to follow:
+1. Acknowledge the question and the insights being analyzed
+2. Summarize the requirements that will be passed to the tech team
+3. **IMMEDIATELY include the [TRIGGER_TECH_ANALYSIS] marker** in your response
+4. After the marker, on a new line, provide the JSON object with feature requirements
+
+DO NOT ask permission or say "would you like me to" - automatically initiate the analysis when technical feasibility is requested.
+
+After the [TRIGGER_TECH_ANALYSIS] marker, provide a JSON object in this exact format:
+
+{
+  "title": "Brief feature title",
+  "description": "Detailed feature description",
+  "businessContext": "Customer impact, ARR, urgency summary",
+  "technicalRequirements": "Key technical requirements based on customer needs",
+  "customerData": {
+    "count": 8,
+    "totalARR": 195000,
+    "urgency": "High - 3 renewals within 60 days"
+  }
+}
+
+**Example Response:**
+"Based on these 8 export-related insights representing $195K ARR, I'm initiating a technical feasibility analysis with the Technical Specification Agent.
+
+Key requirements being analyzed:
+- Bulk export of 200+ reports simultaneously
+- CSV format with async processing
+- User-initiated from dashboard
+- Notification on completion
+
+[TRIGGER_TECH_ANALYSIS]
+{
+  "title": "Bulk CSV Export for Reports",
+  "description": "Allow users to export multiple reports (200+) simultaneously in CSV format with async processing and notification on completion",
+  "businessContext": "8 Enterprise customers representing $195K ARR. 3 have renewal dates within 60 days. Competitive pressure mentioned in 6 cases.",
+  "technicalRequirements": "Must support 200+ reports per export, CSV format initially, user-initiated from dashboard, async processing with notification",
+  "customerData": {
+    "count": 8,
+    "totalARR": 195000,
+    "urgency": "High - 3 renewals within 60 days"
+  }
+}"
+
+**Phrases that trigger technical analysis:**
+- "analyze the technical feasibility"
+- "what would it take to implement"
+- "can we build this"
+- "what's the technical approach"
+- "work with engineering on this"
 
 ## Important Guidelines
 
@@ -261,8 +308,74 @@ export async function processInsightsMessage(sessionId, message, conversationHis
 
   const agentResponse = extractTextContent(response);
 
+  // Check if agent wants to trigger technical analysis
+  // Extract everything after [TRIGGER_TECH_ANALYSIS] marker
+  const triggerIndex = agentResponse.indexOf('[TRIGGER_TECH_ANALYSIS]');
+  let triggerMatch = null;
+
+  if (triggerIndex !== -1) {
+    // Find the JSON object after the trigger
+    const afterTrigger = agentResponse.substring(triggerIndex + '[TRIGGER_TECH_ANALYSIS]'.length);
+    const jsonStart = afterTrigger.indexOf('{');
+
+    if (jsonStart !== -1) {
+      // Find matching closing brace
+      let depth = 0;
+      let jsonEnd = -1;
+      for (let i = jsonStart; i < afterTrigger.length; i++) {
+        if (afterTrigger[i] === '{') depth++;
+        if (afterTrigger[i] === '}') {
+          depth--;
+          if (depth === 0) {
+            jsonEnd = i + 1;
+            break;
+          }
+        }
+      }
+
+      if (jsonEnd !== -1) {
+        const jsonString = afterTrigger.substring(jsonStart, jsonEnd);
+        triggerMatch = [null, jsonString]; // Format to match regex result
+      }
+    }
+  }
+
+
+  let techAnalysisTriggered = false;
+  let techAnalysisResult = null;
+  let displayResponse = agentResponse;
+  let featureRequirements = null;
+
+  if (triggerMatch) {
+    console.log('🎯 Insights Agent: Detected technical analysis trigger');
+
+    try {
+      // Extract and parse feature requirements JSON
+      const featureRequirementsJson = triggerMatch[1];
+      featureRequirements = JSON.parse(featureRequirementsJson);
+
+      console.log('📋 Feature Requirements:', featureRequirements);
+
+      // Trigger autonomous technical analysis
+      techAnalysisResult = await performAutonomousAnalysis(sessionId, featureRequirements);
+      techAnalysisTriggered = true;
+
+      console.log('✅ Tech Spec Agent: Analysis complete');
+
+      // Remove the trigger marker and JSON from the display response
+      displayResponse = agentResponse.substring(0, triggerIndex).trim();
+
+    } catch (error) {
+      console.error('❌ Error triggering technical analysis:', error);
+      // Don't fail the whole request, just log the error
+      // Remove the malformed trigger from response
+      displayResponse = agentResponse.replace(/\[TRIGGER_TECH_ANALYSIS\][\s\S]*$/, '').trim();
+      displayResponse += '\n\n⚠️ Note: There was an issue initiating technical analysis. Please try again or contact the Engineering Lead directly.';
+    }
+  }
+
   return {
-    response: agentResponse,
+    response: displayResponse,
     usage: {
       inputTokens: response.usage.input_tokens,
       outputTokens: response.usage.output_tokens
@@ -270,7 +383,12 @@ export async function processInsightsMessage(sessionId, message, conversationHis
     insightsContext: {
       totalInsights: insights.length,
       stats: stats
-    }
+    },
+    techAnalysisTriggered,
+    techAnalysisResult: techAnalysisTriggered && featureRequirements ? {
+      timestamp: techAnalysisResult.timestamp,
+      featureTitle: featureRequirements.title || 'Untitled Feature'
+    } : null
   };
 }
 

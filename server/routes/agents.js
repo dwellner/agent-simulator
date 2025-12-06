@@ -104,7 +104,9 @@ router.post('/insights', validateAgentRequest, async (req, res) => {
       success: true,
       response: result.response,
       usage: result.usage,
-      insightsContext: result.insightsContext
+      insightsContext: result.insightsContext,
+      techAnalysisTriggered: result.techAnalysisTriggered,
+      techAnalysisResult: result.techAnalysisResult
     });
 
   } catch (error) {
