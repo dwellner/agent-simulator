@@ -190,10 +190,12 @@ export function clearSessionInsights(sessionId) {
     throw new Error('Session ID is required');
   }
 
-  if (sessionsStore.has(sessionId)) {
-    sessionsStore.get(sessionId).insights = [];
-    console.log(`✓ Cleared all insights for session ${sessionId}`);
-  }
+  // Get or create session data (ensures session exists)
+  const sessionData = getSessionData(sessionId);
+  const previousCount = sessionData.insights.length;
+  sessionData.insights = [];
+
+  console.log(`✓ Cleared all insights for session ${sessionId.substring(0, 8)}... (had ${previousCount} insights)`);
 }
 
 /**
