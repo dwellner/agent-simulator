@@ -180,6 +180,7 @@ npm run dev
 - **Frontend**: React 18, Vite, Custom Hooks for state management
 - **Backend**: Node.js, Express, express-session
 - **AI**: Anthropic Claude API (Sonnet 3.5)
+- **Testing**: Vitest with 71 unit tests
 - **Data Flow**: RESTful APIs with session-based persistence
 
 ---
@@ -211,10 +212,21 @@ npm run dev
   - Activity feed integration for agent work
   - Real-time updates during autonomous analysis
 
+### ✅ Recently Completed
+
+- **Phase 10**: Demo flow polish
+  - Reset functionality with backend session clearing
+  - Retry logic with exponential backoff (2 retries, 5xx errors only)
+  - User-friendly error messages for all error types
+  - Compact UI redesign with reduced vertical space usage
+- **Phase 11.1**: Unit testing framework
+  - Vitest 4.0.15 with 71 passing tests (100% pass rate)
+  - Mock data validation and helper function tests
+  - API utilities testing (retry logic, error handling)
+
 ### 🚧 In Progress
 
-- **Phase 10**: Demo flow polish (reset, error handling, visual improvements)
-- **Phase 11**: Testing and validation
+- **Phase 11.2-11.4**: Integration and end-to-end testing
 - **Phase 12**: Deployment preparation
 
 ### 📅 Deferred (Post-Deployment)
@@ -278,11 +290,14 @@ Engineering Review
 ### Running Tests
 
 ```bash
-# Test PM → Tech Agent trigger
-node server/test-pm-tech-trigger.js
+# Unit tests (Vitest)
+npm test                    # Run all tests once
+npm run test:watch         # Run tests in watch mode
+npm run test:ui            # Run tests with UI
 
-# Test Tech Spec Agent modes
-node server/test-tech-agent.js
+# Integration tests (Backend)
+node server/test-pm-tech-trigger.js  # Test PM → Tech Agent trigger
+node server/test-tech-agent.js       # Test Tech Spec Agent modes
 ```
 
 ### Environment Variables
@@ -311,11 +326,15 @@ agent-simulator/
 │   ├── agents/            # AI agent implementations
 │   ├── routes/            # API endpoints
 │   ├── services/          # Business logic
-│   └── data/              # Mock data
+│   ├── data/              # Mock data
+│   └── test-*.js          # Integration tests
 ├── src/                   # Frontend
 │   ├── components/        # React components
 │   ├── hooks/            # Custom React hooks
+│   ├── data/              # Mock data + tests
+│   ├── utils/             # Utility functions + tests
 │   └── App.jsx
+├── vitest.config.js       # Vitest configuration
 └── package.json
 ```
 
