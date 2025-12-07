@@ -44,7 +44,7 @@ function useWorkflowState() {
       const conversationHistory = csmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
       const data = await retryWithBackoff(async () => {
-        const response = await fetch('http://localhost:3001/api/agents/intake', {
+        const response = await fetch('/api/agents/intake', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -140,7 +140,7 @@ function useWorkflowState() {
       const conversationHistory = pmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
       const data = await retryWithBackoff(async () => {
-        const response = await fetch('http://localhost:3001/api/agents/insights', {
+        const response = await fetch('/api/agents/insights', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -258,7 +258,7 @@ function useWorkflowState() {
       const conversationHistory = engMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
       const data = await retryWithBackoff(async () => {
-        const response = await fetch('http://localhost:3001/api/agents/techspec', {
+        const response = await fetch('/api/agents/techspec', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -381,7 +381,7 @@ function useWorkflowState() {
 
     try {
       // POST insight to backend
-      const response = await fetch('http://localhost:3001/api/insights/submit', {
+      const response = await fetch('/api/insights/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -435,7 +435,7 @@ function useWorkflowState() {
   const resetWorkflow = async () => {
     try {
       // Clear backend session data first
-      const response = await fetch('http://localhost:3001/api/insights/reset', {
+      const response = await fetch('/api/insights/reset', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

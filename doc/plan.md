@@ -705,11 +705,24 @@ Multi-stage Dockerfile builds frontend and serves via Express backend on port 30
   - **Fix**: Updated Dockerfile to copy `src/data` directory to production image
     - Added `COPY src/data ./src/data` after server copy
 
+- **Issue 3 - Local Network Access Prompt**: After third deployment, browser showed dialog "agent-simulator.fly.dev wants to look for and connect to any device on your local network" when sending messages
+  - **Root cause**: Frontend code had hardcoded `http://localhost:3001/api/...` URLs
+  - In production, the browser blocks access to localhost from remote sites, triggering local network access prompt
+  - **Fix**: Updated all fetch URLs to use relative paths (`/api/...`) instead of absolute localhost URLs
+    - Works in development: Vite proxies `/api` to `localhost:3001` automatically
+    - Works in production: Same origin, so `/api` resolves to `https://agent-simulator.fly.dev/api`
+    - Fixed 5 fetch calls in `src/hooks/useWorkflowState.js`:
+      - `/api/agents/intake` (CSM agent)
+      - `/api/agents/insights` (PM agent)
+      - `/api/agents/techspec` (Engineering agent)
+      - `/api/insights/submit` (Submit insight)
+      - `/api/insights/reset` (Reset workflow)
+
 - Secrets configured via `fly secrets set`:
   - CLAUDE_API_KEY
   - SESSION_SECRET (generated with openssl rand -base64 32)
 
-**Next Step:** Redeploy with `fly deploy` to validate both fixes
+**Next Step:** Rebuild frontend and redeploy with `fly deploy` to validate all three fixes
 
 **Validation:** Pending redeployment and testing
 
