@@ -76,11 +76,30 @@ function Layout() {
   return (
     <div className="layout">
       <header className="layout-header">
-        <h1>AI-Enhanced Product Workflow Demo</h1>
-        <p className="subtitle">See how AI agents transform product development workflows</p>
+        <div className="header-left">
+          <h1>AI-Enhanced Product Workflow Demo</h1>
+          <a
+            href="https://github.com/dwellner/agent-simulator"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="github-link"
+          >
+            Learn more →
+          </a>
+        </div>
       </header>
 
       <main className="layout-main">
+        <div className="header-right">
+          <WorkflowTimeline
+            csmMessageCount={csmMessages.length}
+            pmMessageCount={pmMessages.length}
+            engMessageCount={engMessages.length}
+            startTime={startTime}
+            resetWorkflow={resetWorkflow}
+          />
+        </div>
+
         {/* Top Section - Three Role Windows */}
         <section className="role-windows">
           <RoleWindow
@@ -112,21 +131,7 @@ function Layout() {
 
         {/* Middle Section - Agent Activity Feed */}
         <AgentActivityFeed activities={activities} />
-
-        {/* Bottom Section - Workflow Timeline */}
-        <WorkflowTimeline
-          csmMessageCount={csmMessages.length}
-          pmMessageCount={pmMessages.length}
-          engMessageCount={engMessages.length}
-          startTime={startTime}
-        />
       </main>
-
-      <footer className="layout-footer">
-        <button className="reset-button" onClick={resetWorkflow}>
-          Reset Demo
-        </button>
-      </footer>
     </div>
   );
 }

@@ -5,7 +5,8 @@ function WorkflowTimeline({
   csmMessageCount = 0,
   pmMessageCount = 0,
   engMessageCount = 0,
-  startTime
+  startTime,
+  resetWorkflow
 }) {
   const [elapsedTime, setElapsedTime] = useState(0);
 
@@ -34,7 +35,6 @@ function WorkflowTimeline({
 
   return (
     <section className="workflow-timeline">
-      <h3>📊 Activity Status</h3>
       <div className="timeline-content">
         <div className="timeline-roles">
           <div className={`timeline-role ${getRoleStatus(csmMessageCount)}`}>
@@ -78,6 +78,10 @@ function WorkflowTimeline({
           <span className="time-icon">⏱️</span>
           <span className="time-value">{formatTime(elapsedTime)} elapsed</span>
         </div>
+        <button className="reset-button" onClick={resetWorkflow}>
+          Reset Demo
+        </button>
+
       </div>
     </section>
   );

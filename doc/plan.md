@@ -456,14 +456,18 @@ User confirmed: PM agent correctly reports no insights after reset, full workflo
 
 All tests passed successfully.
 
-### Step 10.4: Visual Polish
-- [ ] Improve chat bubble styling
-- [ ] Add smooth scroll animations
-- [ ] Enhance active/inactive role indicators
-- [ ] Polish timeline visual design
-- [ ] Ensure consistent spacing and typography
+### Step 10.4: Visual Polish & Layout Redesign
+- [x] Reduce top banner height to half current size
+- [x] Add "Learn more" link to GitHub repo in banner
+- [x] Move reset button from footer to top-right of banner
+- [x] Move elapsed time timer to top banner (with reset button)
+- [x] Redesign activity status panel to be as slim as possible
+- [x] Remove bottom footer (reset button moved)
+**Implementation** 
 
-**Validation:** UI looks professional and polished
+- notes: UI Changes done manually without Claude
+
+**Validation:** UI is more compact, uses vertical space efficiently ✅
 
 ---
 
