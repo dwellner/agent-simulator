@@ -296,13 +296,13 @@ npm run test:watch         # Run tests in watch mode
 npm run test:ui            # Run tests with UI
 
 # Integration tests (Backend - requires server running)
-node server/test-integration-csm.js  # Test CSM conversation flow (25+ assertions)
-node server/test-integration-pm.js   # Test PM query flow with Tech Agent triggering (15+ assertions)
-node server/test-integration-e2e.js  # Test complete CSM → PM → Engineering workflow (20+ assertions)
+node server/tests/integration/csm.test.js  # Test CSM conversation flow (25+ assertions)
+node server/tests/integration/pm.test.js   # Test PM query flow with Tech Agent triggering (15+ assertions)
+node server/tests/integration/e2e.test.js  # Test complete CSM → PM → Engineering workflow (20+ assertions)
 
 # Component tests (Backend)
-node server/test-pm-tech-trigger.js  # Test PM → Tech Agent trigger
-node server/test-tech-agent.js       # Test Tech Spec Agent modes
+node server/tests/component/pm-tech-trigger.test.js  # Test PM → Tech Agent trigger
+node server/tests/component/tech-agent.test.js       # Test Tech Spec Agent modes
 ```
 
 ### Environment Variables
@@ -332,7 +332,9 @@ agent-simulator/
 │   ├── routes/            # API endpoints
 │   ├── services/          # Business logic
 │   ├── data/              # Mock data
-│   └── test-*.js          # Integration tests
+│   └── tests/             # Backend tests
+│       ├── integration/   # Integration tests
+│       └── component/     # Component tests
 ├── src/                   # Frontend
 │   ├── components/        # React components
 │   ├── hooks/            # Custom React hooks
