@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { retryWithBackoff, isRetryableError, getUserFriendlyErrorMessage } from '../utils/apiUtils.js';
 
 /**
  * Custom hook for managing workflow state across all three roles (CSM, PM, Engineering).
@@ -39,27 +40,32 @@ function useWorkflowState() {
     }]);
 
     try {
-      // Call the intake agent API
+      // Call the intake agent API with retry logic
       const conversationHistory = csmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
-      const response = await fetch('http://localhost:3001/api/agents/intake', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies for session
-        body: JSON.stringify({
-          message,
-          conversationHistory
-        })
+      const data = await retryWithBackoff(async () => {
+        const response = await fetch('http://localhost:3001/api/agents/intake', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies for session
+          body: JSON.stringify({
+            message,
+            conversationHistory
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Server error: ${response.status}`);
+        }
+
+        return await response.json();
+      }, {
+        maxRetries: 2,
+        shouldRetry: isRetryableError
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Server error: ${response.status}`);
-      }
-
-      const data = await response.json();
 
       // Add agent response to messages
       const agentMessage = {
@@ -87,13 +93,8 @@ function useWorkflowState() {
     } catch (error) {
       console.error('Error calling intake agent:', error);
 
-      // Provide user-friendly error message
-      let errorMessage = 'Failed to process request. ';
-      if (error.message.includes('fetch')) {
-        errorMessage += 'Cannot connect to server. Please make sure the backend is running.';
-      } else {
-        errorMessage += error.message;
-      }
+      // Get user-friendly error message
+      const errorMessage = getUserFriendlyErrorMessage(error, 'Request Intake Agent');
 
       const errorMsg = {
         role: 'assistant',
@@ -106,7 +107,7 @@ function useWorkflowState() {
       setActivities(prev => [...prev, {
         type: 'error',
         agent: 'Request Intake Agent',
-        message: `Error: ${error.message}`,
+        message: `Error: ${error.message || 'Unknown error'}`,
         timestamp: new Date().toISOString()
       }]);
     } finally {
@@ -135,27 +136,32 @@ function useWorkflowState() {
     }]);
 
     try {
-      // Call the insights agent API
+      // Call the insights agent API with retry logic
       const conversationHistory = pmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
-      const response = await fetch('http://localhost:3001/api/agents/insights', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies for session
-        body: JSON.stringify({
-          message,
-          conversationHistory
-        })
+      const data = await retryWithBackoff(async () => {
+        const response = await fetch('http://localhost:3001/api/agents/insights', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies for session
+          body: JSON.stringify({
+            message,
+            conversationHistory
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Server error: ${response.status}`);
+        }
+
+        return await response.json();
+      }, {
+        maxRetries: 2,
+        shouldRetry: isRetryableError
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Server error: ${response.status}`);
-      }
-
-      const data = await response.json();
 
       // Add agent response to messages
       const agentMessage = {
@@ -205,13 +211,8 @@ function useWorkflowState() {
     } catch (error) {
       console.error('Error calling insights agent:', error);
 
-      // Provide user-friendly error message
-      let errorMessage = 'Failed to analyze insights. ';
-      if (error.message.includes('fetch')) {
-        errorMessage += 'Cannot connect to server. Please make sure the backend is running.';
-      } else {
-        errorMessage += error.message;
-      }
+      // Get user-friendly error message
+      const errorMessage = getUserFriendlyErrorMessage(error, 'Customer Insights Agent');
 
       const errorMsg = {
         role: 'assistant',
@@ -224,7 +225,7 @@ function useWorkflowState() {
       setActivities(prev => [...prev, {
         type: 'error',
         agent: 'Customer Insights Agent',
-        message: `Error: ${error.message}`,
+        message: `Error: ${error.message || 'Unknown error'}`,
         timestamp: new Date().toISOString()
       }]);
     } finally {
@@ -253,28 +254,33 @@ function useWorkflowState() {
     }]);
 
     try {
-      // Call the tech spec agent API
+      // Call the tech spec agent API with retry logic
       const conversationHistory = engMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
-      const response = await fetch('http://localhost:3001/api/agents/techspec', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies for session
-        body: JSON.stringify({
-          message,
-          conversationHistory,
-          mode: 'conversational' // Default to conversational mode
-        })
+      const data = await retryWithBackoff(async () => {
+        const response = await fetch('http://localhost:3001/api/agents/techspec', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include', // Include cookies for session
+          body: JSON.stringify({
+            message,
+            conversationHistory,
+            mode: 'conversational' // Default to conversational mode
+          })
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          throw new Error(errorData.message || `Server error: ${response.status}`);
+        }
+
+        return await response.json();
+      }, {
+        maxRetries: 2,
+        shouldRetry: isRetryableError
       });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Server error: ${response.status}`);
-      }
-
-      const data = await response.json();
 
       // Add agent response to messages
       const agentMessage = {
@@ -295,13 +301,8 @@ function useWorkflowState() {
     } catch (error) {
       console.error('Error calling tech spec agent:', error);
 
-      // Provide user-friendly error message
-      let errorMessage = 'Failed to process request. ';
-      if (error.message.includes('fetch')) {
-        errorMessage += 'Cannot connect to server. Please make sure the backend is running.';
-      } else {
-        errorMessage += error.message;
-      }
+      // Get user-friendly error message
+      const errorMessage = getUserFriendlyErrorMessage(error, 'Technical Specification Agent');
 
       const errorMsg = {
         role: 'assistant',
@@ -314,7 +315,7 @@ function useWorkflowState() {
       setActivities(prev => [...prev, {
         type: 'error',
         agent: 'Technical Specification Agent',
-        message: `Error: ${error.message}`,
+        message: `Error: ${error.message || 'Unknown error'}`,
         timestamp: new Date().toISOString()
       }]);
     } finally {

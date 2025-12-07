@@ -426,13 +426,26 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 **Validation:** Reset button clears all state and restarts demo ✅
 User confirmed: PM agent correctly reports no insights after reset, full workflow works again
 
-### Step 10.3: Error Handling
-- [ ] Add user-friendly error messages
-- [ ] Implement retry logic for failed API calls
-- [ ] Show errors in activity feed
-- [ ] Prevent state corruption on errors
+### Step 10.3: Error Handling ✅
+- [x] Add user-friendly error messages
+- [x] Implement retry logic for failed API calls
+- [x] Show errors in activity feed
+- [x] Prevent state corruption on errors
 
-**Validation:** Errors handled gracefully without breaking UI
+**Implementation Notes:**
+- Created src/utils/apiUtils.js with retry and error handling utilities
+- retryWithBackoff(): Exponential backoff with max 2 retries, initial delay 1s, max delay 5s
+- isRetryableError(): Only retries server errors (5xx) and network errors, not client errors (4xx)
+- getUserFriendlyErrorMessage(): Context-specific messages for different error types (network, timeout, HTTP status codes)
+- Integrated retry logic into all three agent handlers (CSM, PM, Engineering)
+- Enhanced error messages cover: network errors, timeouts, 401/403/404/429/500/502/503/504 status codes
+- Error messages displayed in chat with ⚠️ icon and isError flag
+- Errors logged to activity feed with 'error' type
+- Loading states cleared in finally blocks (prevents state corruption)
+- Retry attempts logged to console for debugging
+
+**Validation:** Errors handled gracefully without breaking UI ✅
+(Awaiting user confirmation)
 
 ### Step 10.4: Visual Polish
 - [ ] Improve chat bubble styling
