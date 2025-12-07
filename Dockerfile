@@ -35,6 +35,9 @@ COPY --from=builder /app/dist ./dist
 # Copy server code
 COPY server ./server
 
+# Copy mock data (required by server agents)
+COPY src/data ./src/data
+
 # Set production environment
 ENV NODE_ENV=production
 

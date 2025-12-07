@@ -692,17 +692,24 @@ Multi-stage Dockerfile builds frontend and serves via Express backend on port 30
 - [ ] Verify session isolation works
 
 **Implementation:**
-- Initial deployment succeeded but returned 502 Bad Gateway error
-- **Root cause identified**: Server was listening on `localhost` (127.0.0.1) by default, which is not accessible from Fly.io's proxy in containerized environments
-- **Fix implemented** (pending redeployment): Updated server.js to listen on `0.0.0.0` (all network interfaces)
-  - Added `HOST` environment variable support (defaults to `0.0.0.0`)
-  - Changed `app.listen(PORT)` to `app.listen(PORT, HOST)`
-  - This allows Fly.io's reverse proxy to reach the application
+- **Issue 1 - 502 Bad Gateway**: Server was listening on `localhost` (127.0.0.1) instead of `0.0.0.0`
+  - **Root cause**: In containerized environments, localhost is only accessible within the container
+  - **Fix**: Updated server.js to listen on `0.0.0.0` (all network interfaces)
+    - Added `HOST` environment variable support (defaults to `0.0.0.0`)
+    - Changed `app.listen(PORT)` to `app.listen(PORT, HOST)`
+    - This allows Fly.io's reverse proxy to reach the application
+
+- **Issue 2 - Module Not Found**: After redeployment, server crashed with `ERR_MODULE_NOT_FOUND: Cannot find module '/app/src/data/mockCustomers.js'`
+  - **Root cause**: Dockerfile only copied `dist/` and `server/` directories, missing `src/data/`
+  - Server agents import mock data from `src/data/mockCustomers.js`, `mockRequests.js`, and `mockCodebase.js`
+  - **Fix**: Updated Dockerfile to copy `src/data` directory to production image
+    - Added `COPY src/data ./src/data` after server copy
+
 - Secrets configured via `fly secrets set`:
   - CLAUDE_API_KEY
   - SESSION_SECRET (generated with openssl rand -base64 32)
 
-**Next Step:** Commit changes and redeploy with `fly deploy` to validate fix
+**Next Step:** Redeploy with `fly deploy` to validate both fixes
 
 **Validation:** Pending redeployment and testing
 
