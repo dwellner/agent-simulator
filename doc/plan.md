@@ -735,14 +735,38 @@ Multi-stage Dockerfile builds frontend and serves via Express backend on port 30
 - No browser security prompts or local network access requests
 - Session persistence works correctly across requests
 
-### Step 12.7: Post-Deployment Setup
-- [ ] Set up Fly.io monitoring (included in free tier)
-- [ ] Configure auto-scaling limits (min: 1, max: 1 for free tier)
-- [ ] Add deployment documentation to README
-- [ ] Document environment variables needed
-- [ ] Create troubleshooting guide for common Fly.io issues
+### Step 12.7: Post-Deployment Setup ✅
+- [x] Set up Fly.io monitoring (included in free tier)
+- [x] Configure auto-scaling limits (min: 1, max: 1 for free tier)
+- [x] Add deployment documentation to README
+- [x] Document environment variables needed
+- [x] Create troubleshooting guide for common Fly.io issues
 
-**Validation:** Monitoring active and documentation complete
+**Implementation:**
+- Created comprehensive `docs/DEPLOYMENT.md` guide covering:
+  - Monitoring setup (Fly.io dashboard + external tools like UptimeRobot)
+  - Scaling configuration (free tier auto-stop/start vs. always-on paid tier)
+  - Environment variable management (secrets via `fly secrets set`)
+  - Deployment updates and rollback procedures
+  - Production troubleshooting for all common issues
+  - Best practices for security, performance, and cost optimization
+- Updated README.md with Deployment section:
+  - Link to live demo (https://agent-simulator.fly.dev)
+  - Quick deploy instructions (3 steps)
+  - Link to comprehensive deployment guide
+- Monitoring configured via Fly.io dashboard:
+  - HTTP request rate and response times
+  - Error rates (4xx/5xx)
+  - Instance health (CPU, memory, network)
+  - Built-in health check endpoint (`/api/health`)
+- Auto-scaling limits configured in fly.toml:
+  - `min_machines_running = 0` (free tier - stops when inactive)
+  - `auto_start_machines = true` (starts on incoming requests)
+  - `auto_stop_machines = true` (stops after inactivity)
+  - Concurrency limits: soft 20, hard 25 connections
+
+**Validation:** Monitoring active and documentation complete ✅
+All deployment documentation created and production deployment verified
 
 ---
 

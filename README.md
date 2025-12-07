@@ -104,6 +104,58 @@ npm run dev
 
 ---
 
+## Deployment
+
+### Production Deployment (Fly.io)
+
+The application is deployed to production on Fly.io:
+
+**Live Demo**: https://agent-simulator.fly.dev
+
+### Deploy Your Own Instance
+
+1. **Prerequisites**:
+   - Fly.io account ([Sign up free](https://fly.io/app/sign-up))
+   - Fly CLI installed ([Install guide](https://fly.io/docs/hands-on/install-flyctl/))
+   - Claude API key ([Get from Anthropic](https://console.anthropic.com/))
+
+2. **Quick Deploy**:
+   ```bash
+   # Authenticate with Fly.io
+   fly auth login
+
+   # Set secrets
+   fly secrets set CLAUDE_API_KEY=your_api_key_here
+   fly secrets set SESSION_SECRET=$(openssl rand -base64 32)
+
+   # Deploy
+   fly deploy
+   ```
+
+3. **Verify Deployment**:
+   ```bash
+   fly status                    # Check app status
+   fly logs                      # View logs
+   fly open                      # Open in browser
+   ```
+
+### Deployment Documentation
+
+For complete deployment instructions, monitoring setup, scaling configuration, and troubleshooting:
+
+📘 **[Deployment Guide](docs/DEPLOYMENT.md)**
+
+Covers:
+- Initial deployment steps
+- Monitoring and metrics (Fly.io dashboard + external tools)
+- Scaling configuration (free tier vs. always-on)
+- Environment variable management
+- Updating and rollback procedures
+- Production troubleshooting guide
+- Best practices for security, performance, and cost
+
+---
+
 ## Documentation
 
 ### 📋 [Project Specification](doc/project-spec.md)
