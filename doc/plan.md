@@ -424,7 +424,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 - Clears all conversation history, activities, structured requests, insights, tech specs, and resets timer
 
 **Validation:** Reset button clears all state and restarts demo ✅
-(Awaiting user confirmation)
+User confirmed: PM agent correctly reports no insights after reset, full workflow works again
 
 ### Step 10.3: Error Handling
 - [ ] Add user-friendly error messages
