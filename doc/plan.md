@@ -679,16 +679,32 @@ fly secrets set SESSION_SECRET=$(openssl rand -base64 32)
 **Validation:** fly.toml created and configured correctly ✅
 Multi-stage Dockerfile builds frontend and serves via Express backend on port 3001
 
-### Step 12.6: Deploy to Fly.io
-- [ ] Build production assets locally to verify
-- [ ] Deploy: `fly deploy`
-- [ ] Monitor deployment logs
-- [ ] Test deployed version at https://[app-name].fly.dev
+### Step 12.6: Deploy to Fly.io (In Progress)
+- [x] Build production assets locally to verify
+- [x] Deploy: `fly deploy` (initial deployment)
+- [x] Monitor deployment logs
+- [x] Identify 502 error: Server listening on wrong interface
+- [x] Implement fix: Updated server to listen on 0.0.0.0
+- [ ] Redeploy with fix: `fly deploy`
+- [ ] Test deployed version at https://agent-simulator.fly.dev
 - [ ] Verify health check endpoint
 - [ ] Test all three agent conversations
 - [ ] Verify session isolation works
 
-**Validation:** Application runs successfully on Fly.io
+**Implementation:**
+- Initial deployment succeeded but returned 502 Bad Gateway error
+- **Root cause identified**: Server was listening on `localhost` (127.0.0.1) by default, which is not accessible from Fly.io's proxy in containerized environments
+- **Fix implemented** (pending redeployment): Updated server.js to listen on `0.0.0.0` (all network interfaces)
+  - Added `HOST` environment variable support (defaults to `0.0.0.0`)
+  - Changed `app.listen(PORT)` to `app.listen(PORT, HOST)`
+  - This allows Fly.io's reverse proxy to reach the application
+- Secrets configured via `fly secrets set`:
+  - CLAUDE_API_KEY
+  - SESSION_SECRET (generated with openssl rand -base64 32)
+
+**Next Step:** Commit changes and redeploy with `fly deploy` to validate fix
+
+**Validation:** Pending redeployment and testing
 
 ### Step 12.7: Post-Deployment Setup
 - [ ] Set up Fly.io monitoring (included in free tier)

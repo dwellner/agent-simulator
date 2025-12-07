@@ -114,7 +114,9 @@ if (process.env.NODE_ENV === 'production') {
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`\n🚀 Server running on http://localhost:${PORT}`);
+// Listen on 0.0.0.0 for containerized environments (Fly.io, Docker, etc.)
+const HOST = process.env.HOST || '0.0.0.0';
+app.listen(PORT, HOST, () => {
+  console.log(`\n🚀 Server running on http://${HOST}:${PORT}`);
   console.log(`📡 CORS enabled for: ${allowedOrigins.join(', ')}\n`);
 });
