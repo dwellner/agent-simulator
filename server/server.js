@@ -1,13 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import session from 'express-session';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import agentRoutes from './routes/agents.js';
 import insightsRoutes from './routes/insights.js';
 import { validateEnv, getEnvSummary } from './config/validateEnv.js';
 import { requestLogger, errorHandler, logInfo } from './config/logger.js';
+import { sessionMiddleware } from './middleware/sessionManager.js';
 
 // Get __dirname equivalent in ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -43,27 +43,14 @@ app.use(cors({
   origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Session-ID'],
+  exposedHeaders: ['X-Session-ID'] // Allow browser to read this header
 }));
 
 app.use(express.json());
 
-// Session middleware - must be configured before routes
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'dev-secret-change-in-production',
-  resave: false,
-  saveUninitialized: true,
-  cookie: {
-    secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    httpOnly: true, // Prevent XSS attacks
-    maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    sameSite: 'lax',
-    path: '/'
-    // No domain - let browser set it based on request origin
-  },
-  name: 'workflow.sid',
-  proxy: true // Trust proxy headers (X-Forwarded-* headers)
-}));
+// Custom session middleware using headers (more reliable than cookies)
+app.use(sessionMiddleware);
 
 // Request logging middleware
 app.use(requestLogger);

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { retryWithBackoff, isRetryableError, getUserFriendlyErrorMessage } from '../utils/apiUtils.js';
 
+import { fetchWithSession, clearSessionId } from '../utils/sessionManager.js';
 /**
  * Custom hook for managing workflow state across all three roles (CSM, PM, Engineering).
  * Supports parallel workflow where all roles can be active simultaneously.
@@ -44,12 +45,8 @@ function useWorkflowState() {
       const conversationHistory = csmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
       const data = await retryWithBackoff(async () => {
-        const response = await fetch('/api/agents/intake', {
+        const response = await fetchWithSession('/api/agents/intake', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies for session
           body: JSON.stringify({
             message,
             conversationHistory
@@ -140,12 +137,8 @@ function useWorkflowState() {
       const conversationHistory = pmMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
       const data = await retryWithBackoff(async () => {
-        const response = await fetch('/api/agents/insights', {
+        const response = await fetchWithSession('/api/agents/insights', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies for session
           body: JSON.stringify({
             message,
             conversationHistory
@@ -258,12 +251,8 @@ function useWorkflowState() {
       const conversationHistory = engMessages.filter(msg => msg.role === 'user' || msg.role === 'assistant');
 
       const data = await retryWithBackoff(async () => {
-        const response = await fetch('/api/agents/techspec', {
+        const response = await fetchWithSession('/api/agents/techspec', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          credentials: 'include', // Include cookies for session
           body: JSON.stringify({
             message,
             conversationHistory,
@@ -381,12 +370,8 @@ function useWorkflowState() {
 
     try {
       // POST insight to backend
-      const response = await fetch('/api/insights/submit', {
+      const response = await fetchWithSession('/api/insights/submit', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Important: Include cookies for session
         body: JSON.stringify({ insight })
       });
 
@@ -435,12 +420,8 @@ function useWorkflowState() {
   const resetWorkflow = async () => {
     try {
       // Clear backend session data first
-      const response = await fetch('/api/insights/reset', {
+      const response = await fetchWithSession('/api/insights/reset', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        credentials: 'include', // Include cookies for session
       });
 
       if (!response.ok) {
@@ -462,6 +443,7 @@ function useWorkflowState() {
     setAvailableTechSpec(null);
     setSharedTechSpecs([]);
     setCsmLoading(false);
+    clearSessionId();
     setPmLoading(false);
     setEngLoading(false);
     setStartTime(Date.now());
