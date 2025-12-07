@@ -4,26 +4,25 @@ import dotenv from 'dotenv';
 import session from 'express-session';
 import agentRoutes from './routes/agents.js';
 import insightsRoutes from './routes/insights.js';
+import { validateEnv, getEnvSummary } from './config/validateEnv.js';
+import { requestLogger, errorHandler, logInfo } from './config/logger.js';
 
 // Load environment variables
 dotenv.config();
 
-// Validate required environment variables
-function validateEnvironment() {
-  const requiredEnvVars = ['CLAUDE_API_KEY'];
-  const missingEnvVars = requiredEnvVars.filter(varName => !process.env[varName]);
-
-  if (missingEnvVars.length > 0) {
-    console.warn('⚠️  Warning: Missing required environment variables:', missingEnvVars.join(', '));
-    console.warn('⚠️  Please add them to your .env file');
-    console.warn('⚠️  Server will start but API functionality may be limited');
-  } else {
-    console.log('✓ All required environment variables are set');
-  }
-
-  // Log configuration (non-sensitive)
-  console.log('✓ Server port:', process.env.PORT || 3001);
-  console.log('✓ Node environment:', process.env.NODE_ENV || 'development');
+// Validate environment variables at startup
+try {
+  validateEnv();
+  const envSummary = getEnvSummary();
+  console.log('Environment configuration:');
+  console.log('  - Node environment:', envSummary.NODE_ENV);
+  console.log('  - Server port:', envSummary.PORT);
+  console.log('  - Claude API key:', envSummary.CLAUDE_API_KEY);
+  console.log('  - Session secret:', envSummary.SESSION_SECRET);
+  console.log('  - Allowed origins:', envSummary.ALLOWED_ORIGINS);
+} catch (error) {
+  // Exit if validation fails
+  process.exit(1);
 }
 
 const app = express();
@@ -56,6 +55,9 @@ app.use(session({
   },
   name: 'workflow.sid' // Custom session cookie name
 }));
+
+// Request logging middleware
+app.use(requestLogger);
 
 // Log session ID for debugging (only in development)
 if (process.env.NODE_ENV !== 'production') {
@@ -90,22 +92,7 @@ app.use((req, res) => {
 });
 
 // Global error handling middleware
-app.use((err, req, res, next) => {
-  console.error('Error:', err);
-
-  // Default to 500 if no status code is set
-  const statusCode = err.statusCode || 500;
-  const message = err.message || 'Internal Server Error';
-
-  res.status(statusCode).json({
-    error: err.name || 'Error',
-    message: message,
-    ...(process.env.NODE_ENV === 'development' && { stack: err.stack })
-  });
-});
-
-// Validate environment before starting
-validateEnvironment();
+app.use(errorHandler);
 
 // Start server
 app.listen(PORT, () => {
