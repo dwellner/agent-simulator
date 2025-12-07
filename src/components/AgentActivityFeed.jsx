@@ -1,43 +1,10 @@
 import { useRef, useEffect } from 'react';
 import './AgentActivityFeed.css';
+import AgentActivityItem from './AgentActivityItem';
 
 function AgentActivityFeed({ activities = [] }) {
-  const activitiesEndRef = useRef(null);
 
-  const scrollToBottom = () => {
-    activitiesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [activities]);
-
-  const getActivityIcon = (type) => {
-    switch (type) {
-      case 'working':
-        return '⚡';
-      case 'complete':
-        return '✓';
-      case 'search':
-        return '🔍';
-      case 'analysis':
-        return '📊';
-      case 'error':
-        return '⚠️';
-      default:
-        return '●';
-    }
-  };
-
-  const formatTimestamp = (timestamp) => {
-    const date = new Date(timestamp);
-    return date.toLocaleTimeString('en-US', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: false
-    });
-  };
+  const newestFirst = (a, b) => new Date(b.timestamp) - new Date(a.timestamp);
 
   return (
     <section className="agent-activity-feed">
@@ -49,26 +16,12 @@ function AgentActivityFeed({ activities = [] }) {
           </p>
         ) : (
           <>
-            {activities.map((activity, index) => (
-              <div
+            {activities.sort(newestFirst).map((activity, index) => (
+              <AgentActivityItem
                 key={index}
-                className={`activity-item ${activity.type}`}
-              >
-                <span className="activity-icon">
-                  {getActivityIcon(activity.type)}
-                </span>
-                <div className="activity-details">
-                  <div className="activity-header">
-                    <span className="activity-agent">{activity.agent}</span>
-                    <span className="activity-timestamp">
-                      {formatTimestamp(activity.timestamp)}
-                    </span>
-                  </div>
-                  <div className="activity-message">{activity.message}</div>
-                </div>
-              </div>
+                activity={activity}
+              />
             ))}
-            <div ref={activitiesEndRef} />
           </>
         )}
       </div>
