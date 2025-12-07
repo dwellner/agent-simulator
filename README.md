@@ -307,15 +307,21 @@ node server/tests/component/tech-agent.test.js       # Test Tech Spec Agent mode
 
 ### Environment Variables
 
-```bash
-# Required
-CLAUDE_API_KEY=sk-ant-...              # Anthropic API key
-SESSION_SECRET=your-secret-key         # Session signing secret
+See [`.env.example`](.env.example) for a complete list with detailed descriptions.
 
-# Optional
-NODE_ENV=development                   # Environment
+Required variables:
+```bash
+CLAUDE_API_KEY=sk-ant-...              # Anthropic API key (get from console.anthropic.com)
+SESSION_SECRET=your-secret-key         # Session signing secret (generate: openssl rand -base64 32)
+```
+
+Optional configuration:
+```bash
+NODE_ENV=development                   # Environment (development|production)
 PORT=3001                              # Backend port
-VITE_PORT=5173                        # Frontend port
+ALLOWED_ORIGINS=http://localhost:5173  # CORS allowed origins (comma-separated)
+LOG_LEVEL=info                         # Logging level (error|warn|info|debug)
+ENABLE_ERROR_STACK=true                # Include stack traces in errors
 ```
 
 ### File Structure
@@ -344,6 +350,268 @@ agent-simulator/
 ├── vitest.config.js       # Vitest configuration
 └── package.json
 ```
+
+### Mock Data Structure
+
+The application uses mock data to simulate realistic scenarios without requiring a database. Mock data is defined in `src/data/`:
+
+#### `mockCustomers.js`
+Simulates customer accounts with business context:
+```javascript
+{
+  id: 'cust-001',
+  companyName: 'Acme Corp',
+  tier: 'Enterprise',              // Enterprise, Growth, or Startup
+  arr: 150000,                     // Annual Recurring Revenue
+  contractRenewalDate: '2025-03-15',
+  accountHealth: 'at-risk',        // at-risk, healthy, or expanding
+  industry: 'Manufacturing',
+  employees: 500,
+  contactPerson: 'Sarah Johnson',
+  contactEmail: 'sjohnson@acmecorp.com'
+}
+```
+
+Available helper functions:
+- `getCustomerById(id)` - Find customer by ID
+- `getCustomersByTier(tier)` - Filter by tier
+- `getAtRiskCustomers()` - Get at-risk customers
+- `getCustomerByName(name)` - Search by company name
+
+#### `mockRequests.js`
+Historical feature requests for pattern matching:
+```javascript
+{
+  id: 'req-001',
+  customerId: 'cust-001',
+  customerSegment: 'Enterprise',
+  requestDate: '2024-09-15',
+  description: 'Bulk export functionality for reports',
+  category: 'Export',              // Export, API, Authentication, etc.
+  status: 'pending',               // pending, in-progress, or completed
+  priority: 'high',                // critical, high, medium, or low
+  revenueAtRisk: 150000,
+  urgency: 'Contract renewal in 60 days',
+  competitorMention: 'Competitor X offers this feature',
+  estimatedVolume: '200+ reports per month',
+  businessImpact: 'Critical for workflow efficiency'
+}
+```
+
+Available helper functions:
+- `getRequestsByCategory(category)` - Filter by category
+- `getRequestsByStatus(status)` - Filter by status
+- `getHighPriorityRequests()` - Get high/critical priority requests
+- `getSimilarRequests(category)` - Find similar requests
+- `getTotalRevenueAtRisk()` - Calculate total revenue at risk
+
+#### `mockCodebase.js`
+Simulates existing technical components for feasibility analysis:
+```javascript
+{
+  components: [
+    {
+      name: 'Export API',
+      path: '/api/v1/exports',
+      description: 'Handles data export requests in various formats',
+      language: 'Node.js',
+      dependencies: ['express', 'csv-parser', 'pdfkit', 'xlsx'],
+      lastModified: '2024-09-15',
+      complexity: 'medium',         // low, medium, or high
+      performance: 'Handles up to 50 concurrent export requests',
+      limitations: 'Single file exports only, no batching support'
+    }
+  ],
+  pastImplementations: [
+    {
+      featureName: 'Scheduled Report Generation',
+      implementationDate: '2024-07-15',
+      complexity: 'medium',
+      timeToImplement: '5 days',
+      approach: 'Extended Scheduler Service with report generation hooks',
+      challenges: 'Timezone handling, retry logic for failed reports',
+      successMetrics: 'Reduced manual report generation by 80%'
+    }
+  ],
+  architecturePatterns: [
+    {
+      pattern: 'Microservices',
+      usage: 'Services are modular and independently deployable',
+      benefits: 'Easy to scale individual components'
+    }
+  ]
+}
+```
+
+Available helper functions:
+- `getComponentByName(name)` - Find component by name
+- `getRelatedComponents(dependency)` - Find components using a dependency
+- `getPastImplementationsByComplexity(complexity)` - Filter past implementations
+- `searchComponents(searchTerm)` - Search components by name/description
+
+---
+
+## Troubleshooting
+
+### Server Won't Start
+
+**Error**: `ENVIRONMENT VALIDATION FAILED`
+```
+❌ Missing required environment variable: CLAUDE_API_KEY
+```
+
+**Solution**: Ensure you have created a `.env` file with your Claude API key:
+```bash
+cp .env.example .env
+# Edit .env and add your CLAUDE_API_KEY
+```
+
+Get an API key from [Anthropic Console](https://console.anthropic.com/).
+
+---
+
+**Error**: `Port 3001 already in use`
+
+**Solution**: Kill the process using the port or change the port:
+```bash
+# Find and kill the process
+lsof -ti:3001 | xargs kill -9
+
+# Or change the port in .env
+PORT=3002
+```
+
+---
+
+### Frontend Issues
+
+**Error**: Frontend shows "Failed to fetch" or "Network Error"
+
+**Solution**:
+1. Verify the backend server is running on port 3001
+2. Check CORS configuration in `.env`:
+   ```bash
+   ALLOWED_ORIGINS=http://localhost:5173
+   ```
+3. Clear browser cache and cookies (session cookie might be stale)
+
+---
+
+**Error**: Page refreshes lose all data
+
+**Solution**: This is expected behavior. The application uses:
+- **Session-based state** (2-hour TTL) - persists across page refreshes
+- **In-memory React state** - resets on page refresh
+
+To preserve data across refreshes, ensure:
+1. Insights are submitted to PM via "Submit Insight" button
+2. Tech specs are shared to Engineering via "Share with Engineering" button
+
+---
+
+### AI Agent Issues
+
+**Error**: "Anthropic API error: 429 Rate Limit Exceeded"
+
+**Solution**: You've hit the API rate limit. Wait a few seconds and try again. The application includes automatic retry logic with exponential backoff (2 retries for 5xx errors).
+
+---
+
+**Error**: "Anthropic API error: 401 Unauthorized"
+
+**Solution**: Your API key is invalid or expired:
+1. Verify your API key in `.env`
+2. Get a new key from [Anthropic Console](https://console.anthropic.com/)
+3. Restart the server after updating `.env`
+
+---
+
+**Error**: Agent responses are incomplete or cut off
+
+**Solution**: This is usually due to token limits. The application uses Claude Sonnet 3.5 with a 200K token context window, which should handle most workflows. If you encounter this:
+1. Try with shorter messages
+2. Reset the workflow and start fresh
+3. Check the server logs for detailed error messages
+
+---
+
+### Testing Issues
+
+**Error**: Integration tests fail with "Connection refused"
+
+**Solution**: Integration tests require the server to be running:
+```bash
+# Terminal 1: Start the server
+npm run dev
+
+# Terminal 2: Run tests
+node server/tests/integration/csm.test.js
+```
+
+---
+
+**Error**: Unit tests fail with "Cannot find module"
+
+**Solution**: Ensure dependencies are installed:
+```bash
+npm install
+npm test
+```
+
+---
+
+### Production Build Issues
+
+**Error**: Production build shows blank page
+
+**Solution**:
+1. Verify the build completed successfully:
+   ```bash
+   npm run build
+   ```
+2. Check that `dist/` directory exists with built files
+3. Ensure `NODE_ENV=production` when running `npm start`
+4. Check browser console for JavaScript errors
+
+---
+
+**Error**: API calls fail in production with 404
+
+**Solution**: The production server serves both frontend and API. Ensure:
+1. API routes are correctly prefixed with `/api`
+2. Backend is running on the same origin in production
+3. CORS is configured for production domain if using separate deployments
+
+---
+
+### Session Issues
+
+**Error**: "Session expired" or session data disappears
+
+**Solution**: Sessions have a 2-hour TTL. Either:
+1. Continue working within the 2-hour window
+2. Use the Reset button to start a fresh session
+3. Check that `SESSION_SECRET` is set in `.env` (required for session signing)
+
+---
+
+**Error**: Multiple browser tabs show different data
+
+**Solution**: Each browser session has its own data. To share data between tabs:
+1. Use the same browser session (same session cookie)
+2. Or reset and start fresh in one tab
+
+---
+
+### Still Having Issues?
+
+1. Check server logs for detailed error messages
+2. Set `LOG_LEVEL=debug` in `.env` for verbose logging
+3. Review the [Technical Design](doc/technical-design.md) for architecture details
+4. Open an issue on GitHub with:
+   - Error message
+   - Steps to reproduce
+   - Server logs (set `LOG_LEVEL=debug`)
 
 ---
 
