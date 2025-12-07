@@ -213,9 +213,13 @@ npm run dev
 
 ### 🚧 In Progress
 
-- **Phase 10**: Real-time updates with Server-Sent Events
-- **Phase 11**: Demo flow polish
-- **Phase 12**: Testing and validation
+- **Phase 10**: Demo flow polish (reset, error handling, visual improvements)
+- **Phase 11**: Testing and validation
+- **Phase 12**: Deployment preparation
+
+### 📅 Deferred (Post-Deployment)
+
+- **Phase 13**: Real-time updates with Server-Sent Events (advanced enhancement)
 
 See [doc/plan.md](doc/plan.md) for detailed progress tracking.
 

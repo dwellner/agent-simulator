@@ -389,35 +389,9 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 10: Real-time Updates
+## Phase 10: Demo Flow Polish
 
-### Step 10.1: Server-Sent Events Setup
-- [ ] Add SSE endpoint to Express server
-- [ ] Implement event emitter for agent activities
-- [ ] Configure SSE headers and keep-alive
-
-**Validation:** SSE connection established from client
-
-### Step 10.2: Streaming Agent Responses
-- [ ] Stream Claude API responses to client
-- [ ] Update activity feed in real-time
-- [ ] Handle connection errors and reconnection
-
-**Validation:** Agent responses stream smoothly to UI
-
-### Step 10.3: Activity Feed Real-time Updates
-- [ ] Connect activity feed to SSE stream
-- [ ] Display agent work as it happens
-- [ ] Auto-scroll to latest activity
-- [ ] Show typing indicators for active agents
-
-**Validation:** Activity feed updates live during agent work
-
----
-
-## Phase 11: Demo Flow Polish
-
-### Step 11.1: Timing and Pacing
+### Step 10.1: Timing and Pacing
 - [ ] Add elapsed time counter (starts at demo begin)
 - [ ] Update timeline progress indicators
 - [ ] Add smooth animations for message appearance
@@ -425,7 +399,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Demo flow feels smooth and professional
 
-### Step 11.2: Reset Functionality
+### Step 10.2: Reset Functionality
 - [ ] Implement reset button functionality
 - [ ] Clear all conversation history for all roles
 - [ ] Clear PM queue and Engineering specs
@@ -434,7 +408,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Reset button clears all state and restarts demo
 
-### Step 11.3: Error Handling
+### Step 10.3: Error Handling
 - [ ] Add user-friendly error messages
 - [ ] Implement retry logic for failed API calls
 - [ ] Show errors in activity feed
@@ -442,7 +416,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Errors handled gracefully without breaking UI
 
-### Step 11.4: Visual Polish
+### Step 10.4: Visual Polish
 - [ ] Improve chat bubble styling
 - [ ] Add smooth scroll animations
 - [ ] Enhance active/inactive role indicators
@@ -453,9 +427,9 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 12: Testing and Validation
+## Phase 11: Testing and Validation
 
-### Step 12.1: Unit Tests
+### Step 11.1: Unit Tests
 - [ ] Test mock data structure and exports
 - [ ] Test workflow state hook functions
 - [ ] Test agent prompt construction
@@ -463,7 +437,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** All unit tests pass
 
-### Step 12.2: Integration Tests
+### Step 11.2: Integration Tests
 - [ ] Test full CSM conversation flow
 - [ ] Test full PM query flow
 - [ ] Test full Engineering refinement flow
@@ -472,7 +446,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** All integration tests pass
 
-### Step 12.3: End-to-End Demo Test
+### Step 11.3: End-to-End Demo Test
 - [ ] Run complete demo from CSM to Engineering
 - [ ] Verify all data flows correctly
 - [ ] Verify all agents respond appropriately
@@ -481,7 +455,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Complete demo runs successfully
 
-### Step 12.4: Edge Case Testing
+### Step 11.4: Edge Case Testing
 - [ ] Test with various input types
 - [ ] Test with empty inputs
 - [ ] Test with very long messages
@@ -492,9 +466,9 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ---
 
-## Phase 13: Deployment Preparation
+## Phase 12: Deployment Preparation
 
-### Step 13.1: Environment Configuration
+### Step 12.1: Environment Configuration
 - [ ] Create production environment configuration
 - [ ] Add environment variable validation
 - [ ] Configure API key security
@@ -502,7 +476,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Production config works correctly
 
-### Step 13.2: Build Optimization
+### Step 12.2: Build Optimization
 - [ ] Optimize React build for production
 - [ ] Minify and bundle assets
 - [ ] Configure server for production mode
@@ -510,7 +484,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Production build runs successfully
 
-### Step 13.3: Documentation
+### Step 12.3: Documentation
 - [ ] Create README.md with setup instructions
 - [ ] Document environment variables
 - [ ] Add API key setup guide
@@ -519,7 +493,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** New developer can set up project following README
 
-### Step 13.4: Fly.io Account Setup (Manual)
+### Step 12.4: Fly.io Account Setup (Manual)
 **User Action Required:**
 - [ ] Visit https://fly.io/app/sign-up
 - [ ] Sign up with GitHub, Google, or Email
@@ -531,7 +505,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Fly CLI installed and authenticated
 
-### Step 13.5: Fly.io Deployment Configuration
+### Step 12.5: Fly.io Deployment Configuration
 - [ ] Run `fly launch` to create fly.toml configuration
 - [ ] Configure build settings for Node.js + Vite
 - [ ] Set environment variables: `fly secrets set CLAUDE_API_KEY=...`
@@ -541,7 +515,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** fly.toml created and configured correctly
 
-### Step 13.6: Deploy to Fly.io
+### Step 12.6: Deploy to Fly.io
 - [ ] Build production assets locally to verify
 - [ ] Deploy: `fly deploy`
 - [ ] Monitor deployment logs
@@ -552,7 +526,7 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 **Validation:** Application runs successfully on Fly.io
 
-### Step 13.7: Post-Deployment Setup
+### Step 12.7: Post-Deployment Setup
 - [ ] Set up Fly.io monitoring (included in free tier)
 - [ ] Configure auto-scaling limits (min: 1, max: 1 for free tier)
 - [ ] Add deployment documentation to README
@@ -560,6 +534,34 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 - [ ] Create troubleshooting guide for common Fly.io issues
 
 **Validation:** Monitoring active and documentation complete
+
+---
+
+## Phase 13: Real-time Updates (Deferred - Post-Deployment Enhancement)
+
+**Note:** This phase has been deferred until after initial deployment (Phase 12) as it is an advanced enhancement, not critical path functionality. The current implementation already provides good user experience with activity feed updates.
+
+### Step 13.1: Server-Sent Events Setup
+- [ ] Add SSE endpoint to Express server
+- [ ] Implement event emitter for agent activities
+- [ ] Configure SSE headers and keep-alive
+
+**Validation:** SSE connection established from client
+
+### Step 13.2: Streaming Agent Responses
+- [ ] Stream Claude API responses to client
+- [ ] Update activity feed in real-time
+- [ ] Handle connection errors and reconnection
+
+**Validation:** Agent responses stream smoothly to UI
+
+### Step 13.3: Activity Feed Real-time Updates
+- [ ] Connect activity feed to SSE stream
+- [ ] Display agent work as it happens
+- [ ] Auto-scroll to latest activity
+- [ ] Show typing indicators for active agents
+
+**Validation:** Activity feed updates live during agent work
 
 ---
 
@@ -623,19 +625,21 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ## Estimated Timeline
 
-- **Phase 1-2:** 1 day (Foundation + Basic UI)
-- **Phase 3:** 0.5 day (State Management)
-- **Phase 4:** 0.5 day (Backend Setup)
-- **Phase 5:** 2 days (Request Intake Agent)
-- **Phase 6:** 2 days (Product Queue Agent)
-- **Phase 7:** 2 days (Technical Spec Agent)
-- **Phase 8:** 1 day (Agent Coordination)
-- **Phase 9:** 1 day (Real-time Updates)
-- **Phase 10:** 1 day (Polish)
+- **Phase 1-2:** 1 day (Foundation + Basic UI) ✅
+- **Phase 3:** 0.5 day (State Management) ✅
+- **Phase 4:** 0.5 day (Backend Setup) ✅
+- **Phase 5:** 2 days (Request Intake Agent) ✅
+- **Phase 6:** 2 days (Product Queue Agent) ✅
+- **Phase 7:** 2 days (Technical Spec Agent) ✅
+- **Phase 8:** 1 day (Agent Coordination) ✅
+- **Phase 9:** Completed during Phase 8 (Agent-to-Agent Communication) ✅
+- **Phase 10:** 1 day (Demo Flow Polish)
 - **Phase 11:** 1 day (Testing)
 - **Phase 12:** 1 day (Deployment)
+- **Phase 13:** 1 day (Real-time Updates - Deferred post-deployment)
 
-**Total Estimated Time:** ~13 days for core V1
+**Total Estimated Time for Critical Path (Phases 1-12):** ~12 days
+**Completed:** ~9.5 days (Phases 1-9)
 
 ---
 
