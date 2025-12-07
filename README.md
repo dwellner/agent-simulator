@@ -7,6 +7,10 @@
 [![Claude AI](https://img.shields.io/badge/Claude-Sonnet%203.5-764abc)](https://www.anthropic.com/)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+## 🚀 [**Try the Live Demo**](https://agent-simulator.fly.dev)
+
+Experience AI agents coordinating across product development workflows in real-time. No installation required!
+
 ---
 
 ## Overview
