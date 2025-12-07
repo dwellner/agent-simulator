@@ -2,10 +2,16 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import session from 'express-session';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import agentRoutes from './routes/agents.js';
 import insightsRoutes from './routes/insights.js';
 import { validateEnv, getEnvSummary } from './config/validateEnv.js';
 import { requestLogger, errorHandler, logInfo } from './config/logger.js';
+
+// Get __dirname equivalent in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Load environment variables
 dotenv.config();
@@ -82,14 +88,27 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 404 handler for undefined routes
-app.use((req, res) => {
-  res.status(404).json({
-    error: 'Not Found',
-    message: `Cannot ${req.method} ${req.path}`,
-    path: req.path
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.join(__dirname, '..', 'dist');
+
+  // Serve static assets
+  app.use(express.static(distPath));
+
+  // SPA fallback - serve index.html for all non-API routes
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
   });
-});
+} else {
+  // 404 handler for API routes in development (frontend runs on Vite)
+  app.use((req, res) => {
+    res.status(404).json({
+      error: 'Not Found',
+      message: `Cannot ${req.method} ${req.path}`,
+      path: req.path
+    });
+  });
+}
 
 // Global error handling middleware
 app.use(errorHandler);
