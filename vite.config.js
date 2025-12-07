@@ -11,7 +11,11 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
-        changeOrigin: true
+        changeOrigin: false, // Keep same origin for proper cookie handling
+        secure: false,
+        ws: true,
+        cookieDomainRewrite: '', // Remove domain from cookies so browser uses request origin
+        cookiePathRewrite: '/' // Ensure cookies work across all paths
       }
     }
   },
@@ -47,7 +51,11 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://localhost:3001',
-        changeOrigin: true
+        changeOrigin: false, // Keep same origin for proper cookie handling
+        secure: false,
+        ws: true,
+        cookieDomainRewrite: '', // Remove domain from cookies so browser uses request origin
+        cookiePathRewrite: '/' // Ensure cookies work across all paths
       }
     }
   }

@@ -55,21 +55,28 @@ app.use(session({
   saveUninitialized: true,
   cookie: {
     secure: process.env.NODE_ENV === 'production', // HTTPS only in production
-    httpOnly: true,
+    httpOnly: true, // Prevent XSS attacks
     maxAge: 2 * 60 * 60 * 1000, // 2 hours
-    sameSite: 'lax'
+    sameSite: 'lax',
+    path: '/'
+    // No domain - let browser set it based on request origin
   },
-  name: 'workflow.sid' // Custom session cookie name
+  name: 'workflow.sid',
+  proxy: true // Trust proxy headers (X-Forwarded-* headers)
 }));
 
 // Request logging middleware
 app.use(requestLogger);
 
-// Log session ID for debugging (only in development)
+// Log session ID and cookie info for debugging (only in development)
 if (process.env.NODE_ENV !== 'production') {
   app.use((req, res, next) => {
+    console.log(`\n🔍 Request: ${req.method} ${req.path}`);
+    console.log(`   Cookie header: ${req.headers.cookie || 'NONE'}`);
     if (req.session && req.session.id) {
-      console.log(`📋 Session: ${req.session.id.substring(0, 8)}... (${req.method} ${req.path})`);
+      console.log(`   Session ID: ${req.session.id.substring(0, 8)}...`);
+    } else {
+      console.log(`   Session: NO SESSION`);
     }
     next();
   });
