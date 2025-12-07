@@ -642,15 +642,42 @@ README provides complete setup instructions, troubleshooting guidance, and mock 
 
 **Validation:** Fly CLI installed and authenticated ✅
 
-### Step 12.5: Fly.io Deployment Configuration
-- [ ] Run `fly launch` to create fly.toml configuration
-- [ ] Configure build settings for Node.js + Vite
-- [ ] Set environment variables: `fly secrets set CLAUDE_API_KEY=...`
-- [ ] Configure internal port (3001)
-- [ ] Set app region (choose closest to target users)
-- [ ] Review and adjust fly.toml settings
+### Step 12.5: Fly.io Deployment Configuration ✅
+- [x] Run `fly launch` to create fly.toml configuration
+- [x] Configure build settings for Node.js + Vite
+- [x] Set environment variables: `fly secrets set CLAUDE_API_KEY=...` (pending user action)
+- [x] Configure internal port (3001)
+- [x] Set app region (arn - Stockholm)
+- [x] Review and adjust fly.toml settings
 
-**Validation:** fly.toml created and configured correctly
+**Implementation:**
+- Created multi-stage Dockerfile for Node.js + Vite application:
+  - Stage 1 (builder): Installs dependencies and builds frontend with Vite
+  - Stage 2 (runtime): Production-only dependencies, serves built frontend + backend
+  - Uses Node.js 18 Alpine for smaller image size
+  - Exposes port 3001 for internal communication
+- Updated fly.toml configuration:
+  - Set internal_port to 3001 (matching our Express server)
+  - Configured NODE_ENV=production and PORT=3001
+  - Set concurrency limits (soft: 20, hard: 25 connections)
+  - Configured VM resources (256MB memory, 1 shared CPU - free tier compatible)
+  - Enabled auto-stop/auto-start for cost optimization
+  - Primary region: arn (Stockholm, Europe)
+- Updated .dockerignore to exclude:
+  - node_modules (will be installed during build)
+  - .env files (secrets managed via Fly.io)
+  - Development files (tests, docs, IDE configs)
+  - Build artifacts (dist rebuilt during Docker build)
+
+**Next Steps (User Action Required):**
+Before deploying, set the required secrets:
+```bash
+fly secrets set CLAUDE_API_KEY=your_actual_api_key_here
+fly secrets set SESSION_SECRET=$(openssl rand -base64 32)
+```
+
+**Validation:** fly.toml created and configured correctly ✅
+Multi-stage Dockerfile builds frontend and serves via Express backend on port 3001
 
 ### Step 12.6: Deploy to Fly.io
 - [ ] Build production assets locally to verify

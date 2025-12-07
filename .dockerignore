@@ -1,1 +1,46 @@
+# Fly.io deployment files
 fly.toml
+.flyctl
+
+# Dependencies
+node_modules
+
+# Development
+.env
+.env.*
+!.env.example
+
+# Build artifacts
+dist
+
+# Git
+.git
+.gitignore
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Testing
+coverage
+.nyc_output
+server/tests
+
+# Documentation (optional - remove if you want docs in production)
+doc
+README.md
+
+# CI/CD
+.github
