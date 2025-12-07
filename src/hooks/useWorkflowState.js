@@ -429,9 +429,29 @@ function useWorkflowState() {
   };
 
   /**
-   * Reset all workflow state
+   * Reset all workflow state (both frontend and backend session)
    */
-  const resetWorkflow = () => {
+  const resetWorkflow = async () => {
+    try {
+      // Clear backend session data first
+      const response = await fetch('http://localhost:3001/api/insights/reset', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Include cookies for session
+      });
+
+      if (!response.ok) {
+        console.error('Failed to reset backend session:', await response.text());
+        // Continue with frontend reset even if backend fails
+      }
+    } catch (error) {
+      console.error('Error resetting backend session:', error);
+      // Continue with frontend reset even if backend fails
+    }
+
+    // Reset all frontend state
     setCsmMessages([]);
     setPmMessages([]);
     setEngMessages([]);
@@ -444,6 +464,8 @@ function useWorkflowState() {
     setPmLoading(false);
     setEngLoading(false);
     setStartTime(Date.now());
+
+    console.log('✓ Demo reset complete');
   };
 
   return {

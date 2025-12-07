@@ -391,22 +391,40 @@ The **Customer Insights Repository** is not a mechanical queue to be processed. 
 
 ## Phase 10: Demo Flow Polish
 
-### Step 10.1: Timing and Pacing
-- [ ] Add elapsed time counter (starts at demo begin)
-- [ ] Update timeline progress indicators
-- [ ] Add smooth animations for message appearance
-- [ ] Implement appropriate loading states
+### Step 10.1: Timing and Pacing ✅
+- [x] Add elapsed time counter (starts at demo begin)
+- [x] Update timeline progress indicators
+- [x] Add smooth animations for message appearance
+- [x] Implement appropriate loading states
 
-**Validation:** Demo flow feels smooth and professional
+**Implementation Notes:**
+- Elapsed time counter already implemented in WorkflowTimeline.jsx:10-28 with 1-second interval updates
+- Timeline progress indicators in WorkflowTimeline.jsx:30-75 show role status, message counts, and pulsing animation for active roles
+- Message animations: fadeIn (RoleWindow.css:85-97) and slideIn (AgentActivityFeed.css:40-53)
+- Loading states: animated bouncing dots in RoleWindow.jsx:67-80 with smooth CSS animations
+- All transitions and animations use CSS transitions/keyframes for smooth, professional feel
+- Auto-scroll to bottom with smooth behavior already implemented
 
-### Step 10.2: Reset Functionality
-- [ ] Implement reset button functionality
-- [ ] Clear all conversation history for all roles
-- [ ] Clear PM queue and Engineering specs
-- [ ] Clear activity feed
-- [ ] Reset timer
+**Validation:** Demo flow feels smooth and professional ✅
+(All features were already implemented in previous phases)
 
-**Validation:** Reset button clears all state and restarts demo
+### Step 10.2: Reset Functionality ✅
+- [x] Implement reset button functionality
+- [x] Clear all conversation history for all roles
+- [x] Clear PM queue and Engineering specs
+- [x] Clear activity feed
+- [x] Reset timer
+
+**Implementation Notes:**
+- Added POST /api/insights/reset endpoint in server/routes/insights.js:181-208
+- Endpoint clears both insights (via clearSessionInsights()) and tech specs (req.session.techSpecs)
+- Updated resetWorkflow() in useWorkflowState.js:434-469 to call backend API before clearing frontend state
+- Async reset function gracefully handles backend failures and continues with frontend reset
+- Reset button already wired up in Layout.jsx:126 footer
+- Clears all conversation history, activities, structured requests, insights, tech specs, and resets timer
+
+**Validation:** Reset button clears all state and restarts demo ✅
+(Awaiting user confirmation)
 
 ### Step 10.3: Error Handling
 - [ ] Add user-friendly error messages

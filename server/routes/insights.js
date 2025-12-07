@@ -174,4 +174,37 @@ router.delete('/clear', ensureSession, (req, res) => {
   }
 });
 
+/**
+ * POST /api/insights/reset
+ * Reset all session data (insights + tech specs) for demo reset
+ */
+router.post('/reset', ensureSession, (req, res) => {
+  try {
+    const sessionId = req.session.id;
+
+    // Clear insights from insights service
+    clearSessionInsights(sessionId);
+
+    // Clear tech specs from session
+    if (req.session.techSpecs) {
+      req.session.techSpecs = [];
+    }
+
+    console.log(`✓ Reset all data for session ${sessionId.substring(0, 8)}...`);
+
+    res.json({
+      success: true,
+      message: 'All session data has been reset',
+      sessionId: sessionId.substring(0, 8) + '...'
+    });
+
+  } catch (error) {
+    console.error('Error resetting session:', error);
+    res.status(500).json({
+      error: 'Reset Error',
+      message: error.message || 'Failed to reset session data'
+    });
+  }
+});
+
 export default router;
