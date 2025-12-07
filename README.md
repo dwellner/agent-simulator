@@ -295,7 +295,12 @@ npm test                    # Run all tests once
 npm run test:watch         # Run tests in watch mode
 npm run test:ui            # Run tests with UI
 
-# Integration tests (Backend)
+# Integration tests (Backend - requires server running)
+node server/test-integration-csm.js  # Test CSM conversation flow (25+ assertions)
+node server/test-integration-pm.js   # Test PM query flow with Tech Agent triggering (15+ assertions)
+node server/test-integration-e2e.js  # Test complete CSM → PM → Engineering workflow (20+ assertions)
+
+# Component tests (Backend)
 node server/test-pm-tech-trigger.js  # Test PM → Tech Agent trigger
 node server/test-tech-agent.js       # Test Tech Spec Agent modes
 ```

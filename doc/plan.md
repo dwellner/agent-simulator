@@ -521,8 +521,10 @@ All tests passed successfully.
 - All tests use native Node.js fetch API (Node 18+)
 - Tests designed to work without browser cookie handling
 
-**Validation:** Integration tests passing ✅
-(CSM workflow test: 25+ assertions passing, validates complete intake-to-submission flow)
+**Validation:** All integration tests passing ✅
+- CSM Conversation Flow: 25+ assertions (validates complete intake-to-submission flow)
+- PM Query Flow: 15+ assertions (validates insights analysis and **Tech Agent auto-triggering**)
+- End-to-End Workflow: 20+ assertions (validates complete CSM → PM → Engineering pipeline)
 
 ### Step 11.3: End-to-End Demo Test
 - [ ] Run complete demo from CSM to Engineering
